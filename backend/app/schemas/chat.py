@@ -19,6 +19,7 @@ class ChatResponse(BaseModel):
     code_output: Optional[str] = None
     code_passed: Optional[bool] = None
     conversation_id: str
+    video_url: Optional[str] = None
     retrieved_memory: Optional[List[Dict[str, Any]]] = None
 
 

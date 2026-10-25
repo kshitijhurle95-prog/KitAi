@@ -230,6 +230,14 @@
     {
       "category": "StudyTopic",
       "id": "Who are you?"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Video"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "create a video explaining Deadlock using"
     }
   ],
   "edges": [
@@ -472,6 +480,11 @@
       "relation": "prerequisite_of",
       "source": "Diagram",
       "target": "What color is this image? One word."
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Video",
+      "target": "create a video explaining Deadlock using"
     }
   ]
 }

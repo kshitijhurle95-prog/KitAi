@@ -14,14 +14,21 @@ router = APIRouter()
 class VideoGenerateRequest(BaseModel):
     topic: str = Field(..., description="Topic or concept to explain (e.g. 'Binary Search', 'Recursion')")
     context: Optional[str] = Field("", description="Optional solution or explanation text to guide narration")
+    orientation: Optional[str] = Field("landscape", description="'landscape' (16:9) or 'portrait' (9:16 for Reels)")
+    analogy_style: Optional[str] = Field("daily_life", description="Style of metaphor: 'daily_life', 'kitchen', 'traffic', 'school', 'sports'")
 
 
 @router.post("/video/generate")
 async def generate_video_endpoint(req: VideoGenerateRequest):
     """Generates an animated video explainer with voice-over narration and visual slides."""
     try:
-        logger.info(f"Generating explainer video for '{req.topic}'...")
-        result = await generate_animated_explainer_video(topic=req.topic, context=req.context)
+        logger.info(f"Generating explainer video for '{req.topic}' (Orientation: {req.orientation}, Style: {req.analogy_style})...")
+        result = await generate_animated_explainer_video(
+            topic=req.topic,
+            context=req.context or "",
+            orientation=req.orientation or "landscape",
+            analogy_style=req.analogy_style or "daily_life"
+        )
         return result
     except Exception as e:
         logger.error(f"Video generation error: {e}", exc_info=True)

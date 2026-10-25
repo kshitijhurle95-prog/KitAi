@@ -59,19 +59,72 @@ class AutonomousStudyAgent:
             task_type = await classify_task(query)
             logger.info(f"Classified task type: '{task_type}'")
 
-            # 3. Generate initial solution
-            solution = await generate_solution(
-                query=query,
-                task_type=task_type,
-                retrieved_memory=memories,
-                conversation_history=conversation_history
-            )
+            if task_type == "video":
+                # Extract clean topic
+                clean_topic = query
+                for prefix in [
+                    "create a video on", "create a video about", "generate video for",
+                    "generate video on", "make a video on", "make a video about",
+                    "explainer video on", "video on", "video about", "create a reel on",
+                    "make a reel on", "animate this", "concept in motion"
+                ]:
+                    if prefix in clean_topic.lower():
+                        idx = clean_topic.lower().find(prefix) + len(prefix)
+                        clean_topic = clean_topic[idx:].strip()
+                        break
+                clean_topic = clean_topic.strip(" .?!,:") or query
 
-            # 4. Verify & Self-Heal in Sandbox (only if code solution and code block present)
-            if task_type == "code" and "```" in solution:
-                verified_solution, verification_result = await verify_and_heal_solution(solution, query)
+                orientation = "portrait" if any(w in query.lower() for w in ["reel", "shorts", "vertical", "portrait", "9:16", "instagram"]) else "landscape"
+                analogy_style = "daily_life"
+                if any(w in query.lower() for w in ["kitchen", "cooking", "food", "chef"]):
+                    analogy_style = "kitchen"
+                elif any(w in query.lower() for w in ["traffic", "car", "road", "intersection"]):
+                    analogy_style = "traffic"
+
+                logger.info(f"Generating video explainer for '{clean_topic}' (Orientation: {orientation})...")
+                from app.output.video_assembler import generate_animated_explainer_video
+                video_res = await generate_animated_explainer_video(
+                    topic=clean_topic,
+                    context=query,
+                    orientation=orientation,
+                    analogy_style=analogy_style
+                )
+                video_url = video_res.get("video_url")
+
+                sb_text = ""
+                for s in video_res.get("storyboard", []):
+                    sb_text += f"\n- **Scene {s.get('scene_number', 1)}: {s.get('headline')}** ({s.get('visual_type')})\n  *{s.get('narration')}*\n"
+
+                reply_markup = (
+                    f"### 🎬 KitAi Animated Concept Breakdown: **{clean_topic}**\n\n"
+                    f"Here is your animated video explaining **{clean_topic}** using everyday analogies and step-by-step logic in motion.\n\n"
+                    f'<div class="my-3 rounded-2xl overflow-hidden border border-slate-700 bg-slate-900 shadow-xl max-w-xl">\n'
+                    f'  <video controls class="w-full aspect-video rounded-t-xl bg-black" src="{video_url}"></video>\n'
+                    f'  <div class="px-4 py-2.5 bg-slate-900/95 flex items-center justify-between text-xs text-slate-300">\n'
+                    f'    <span class="font-semibold text-indigo-400">⏱️ {video_res.get("duration_seconds")}s • {video_res.get("scenes_count")} Scenes ({video_res.get("orientation").title()})</span>\n'
+                    f'    <a href="{video_url}" download class="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition">Download MP4</a>\n'
+                    f'  </div>\n'
+                    f'</div>\n\n'
+                    f"#### 📋 Video Storyboard & Script Breakdown\n{sb_text}\n"
+                )
+
+                solution = reply_markup
+                verified_solution = reply_markup
+                verification_result = {"passed": True, "video_url": video_url}
             else:
-                verified_solution, verification_result = solution, {"passed": True}
+                # 3. Generate initial solution
+                solution = await generate_solution(
+                    query=query,
+                    task_type=task_type,
+                    retrieved_memory=memories,
+                    conversation_history=conversation_history
+                )
+
+                # 4. Verify & Self-Heal in Sandbox (only if code solution and code block present)
+                if task_type == "code" and "```" in solution:
+                    verified_solution, verification_result = await verify_and_heal_solution(solution, query)
+                else:
+                    verified_solution, verification_result = solution, {"passed": True}
 
         # 5. Generate specialized pedagogical explanation only if explicitly requested
         explanation = ""
@@ -115,6 +168,7 @@ class AutonomousStudyAgent:
             "task_type": task_type,
             "code_output": verification_result.get("output"),
             "code_passed": verification_result.get("passed"),
+            "video_url": verification_result.get("video_url"),
             "retrieved_memory": memories
         }
 

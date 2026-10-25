@@ -3,14 +3,24 @@ from app.services.llm_router import llm_router
 from app.utils.prompts import CLASSIFIER_PROMPT
 from app.utils.logger import logger
 
-VALID_TASK_TYPES = {"code", "math", "conceptual", "factual", "explain", "conversational"}
+VALID_TASK_TYPES = {"code", "math", "conceptual", "factual", "explain", "conversational", "video"}
 
 
 async def classify_task(query: str) -> str:
     """Classifies user query into task type using heuristic fast-path or LLM."""
     query_lower = query.strip().lower()
 
-    # 1. Fast heuristics: Greetings and casual chat
+    # 1. Fast heuristics: Video requests
+    video_triggers = [
+        "create a video", "create video", "generate video", "make a video",
+        "explainer video", "animated video", "video on", "video explaining",
+        "video about", "create a reel", "make a reel", "animate this",
+        "concept in motion", "generate animated video"
+    ]
+    if any(vt in query_lower for vt in video_triggers):
+        return "video"
+
+    # 2. Fast heuristics: Greetings and casual chat
     greetings = {"hi", "hello", "hey", "hola", "yo", "sup", "good morning", "good afternoon", "good evening", "how are you", "who are you", "what can you do"}
     if query_lower in greetings or any(query_lower.startswith(g + " ") for g in ["hi", "hello", "hey"]):
         return "conversational"

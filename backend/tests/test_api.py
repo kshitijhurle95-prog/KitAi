@@ -30,6 +30,9 @@ async def test_classifier_heuristics():
     """Verify classification heuristics."""
     task = await classify_task("def quicksort(arr): return arr")
     assert task == "code"
+    
+    task_video = await classify_task("Create a video explaining Recursion with daily life analogy")
+    assert task_video == "video"
 
 
 def test_sm2_spaced_repetition():

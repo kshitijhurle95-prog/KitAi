@@ -78,7 +78,10 @@ async def chat_endpoint(request: ChatRequest, db: AsyncSession = Depends(get_db)
         explanation=agent_result.get("explanation"),
         code_output=agent_result.get("code_output"),
         code_passed=agent_result.get("code_passed"),
-        metadata_json={"retrieved_memory_count": len(agent_result.get("retrieved_memory") or [])}
+        metadata_json={
+            "retrieved_memory_count": len(agent_result.get("retrieved_memory") or []),
+            "video_url": agent_result.get("video_url")
+        }
     )
     db.add(assistant_msg)
     await db.commit()
@@ -91,6 +94,7 @@ async def chat_endpoint(request: ChatRequest, db: AsyncSession = Depends(get_db)
         code_output=agent_result.get("code_output"),
         code_passed=agent_result.get("code_passed"),
         conversation_id=conv_id,
+        video_url=agent_result.get("video_url"),
         retrieved_memory=agent_result.get("retrieved_memory")
     )
 
