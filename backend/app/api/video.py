@@ -22,9 +22,22 @@ class VideoGenerateRequest(BaseModel):
 async def generate_video_endpoint(req: VideoGenerateRequest):
     """Generates an animated video explainer with voice-over narration and visual slides."""
     try:
-        logger.info(f"Generating explainer video for '{req.topic}' (Orientation: {req.orientation}, Style: {req.analogy_style})...")
+        # Clean topic prefix if user entered a conversational prompt
+        clean_topic = req.topic.strip()
+        for prefix in [
+            "generate an explainer video on", "generate an explainer video about",
+            "create an explainer video on", "create a video on", "create a video about",
+            "generate video on", "generate video for", "make a video on", "make a video about",
+            "video on", "video about", "animate this", "animate", "explain"
+        ]:
+            if clean_topic.lower().startswith(prefix):
+                clean_topic = clean_topic[len(prefix):].strip(" :,-")
+                break
+        clean_topic = clean_topic or req.topic
+
+        logger.info(f"Generating explainer video for '{clean_topic}' (Orientation: {req.orientation}, Style: {req.analogy_style})...")
         result = await generate_animated_explainer_video(
-            topic=req.topic,
+            topic=clean_topic,
             context=req.context or "",
             orientation=req.orientation or "landscape",
             analogy_style=req.analogy_style or "daily_life"

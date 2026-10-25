@@ -238,6 +238,14 @@
     {
       "category": "StudyTopic",
       "id": "create a video explaining Deadlock using"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Generate a 5-question multiple choice qu"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Generate an explainer video on Recursion"
     }
   ],
   "edges": [
@@ -438,6 +446,11 @@
     },
     {
       "relation": "prerequisite_of",
+      "source": "Explain",
+      "target": "Generate structured study notes on Data"
+    },
+    {
+      "relation": "prerequisite_of",
       "source": "Math",
       "target": "solve 2x + 5 = 15"
     },
@@ -478,6 +491,11 @@
     },
     {
       "relation": "prerequisite_of",
+      "source": "Conversational",
+      "target": "Generate a 5-question multiple choice qu"
+    },
+    {
+      "relation": "prerequisite_of",
       "source": "Diagram",
       "target": "What color is this image? One word."
     },
@@ -485,6 +503,11 @@
       "relation": "prerequisite_of",
       "source": "Video",
       "target": "create a video explaining Deadlock using"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Video",
+      "target": "Generate an explainer video on Recursion"
     }
   ]
 }

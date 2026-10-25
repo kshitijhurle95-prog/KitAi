@@ -41,6 +41,11 @@ def get_ffprobe_cmd() -> str:
     return "ffprobe"
 
 
+def _exec_cmd(cmd: List[str]) -> subprocess.CompletedProcess:
+    """Synchronous subprocess executor for reliable Windows operation."""
+    return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
 async def get_audio_duration(audio_path: Path) -> float:
     """Gets audio file duration in seconds using ffprobe."""
     ffprobe = get_ffprobe_cmd()
@@ -51,14 +56,12 @@ async def get_audio_duration(audio_path: Path) -> float:
         str(audio_path)
     ]
     try:
-        proc = await asyncio.create_subprocess_exec(
-            *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-        )
-        stdout, _ = await proc.communicate()
-        val = float(stdout.decode().strip())
+        proc = await asyncio.to_thread(_exec_cmd, cmd)
+        val = float(proc.stdout.decode().strip())
         return max(3.0, val)
-    except Exception:
-        return 5.0
+    except Exception as e:
+        logger.warning(f"ffprobe check failed: {e}. Defaulting to 4.5s")
+        return 4.5
 
 
 def _load_font(family: str, size: int) -> ImageFont.ImageFont:
@@ -127,10 +130,13 @@ JSON Schema:
 ]
 """
     try:
-        response = await llm_router.chat(
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.3,
-            max_tokens=3000
+        response = await asyncio.wait_for(
+            llm_router.chat(
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3,
+                max_tokens=2500
+            ),
+            timeout=8.0
         )
         clean = response.strip()
         clean = re.sub(r"^```(?:json)?\s*", "", clean)
@@ -140,9 +146,51 @@ JSON Schema:
             logger.info(f"Successfully generated dynamic LLM storyboard with {len(data)} scenes.")
             return data
     except Exception as e:
-        logger.warning(f"Dynamic storyboard LLM parsing failed: {e}. Using high-quality curated fallback.")
+        logger.warning(f"Dynamic storyboard LLM parsing failed or timed out: {e}. Using high-quality curated fallback.")
 
-    # Curated fallback template tailored to the topic
+    # High quality topic-specific fallbacks for instant zero-latency generation
+    t_lower = topic.lower()
+    if "recursion" in t_lower:
+        return [
+            {
+                "scene_number": 1,
+                "headline": "The Russian Dolls Analogy",
+                "narration": "Imagine Russian nesting dolls. You open a doll, only to find a smaller identical doll inside, until you hit the solid core: the base case!",
+                "bullets": ["Everyday concept: Self-contained nested tasks", "Each call solves a smaller version", "Must reach a solid stopping condition"],
+                "visual_type": "analogy",
+                "visual_title": "REAL-LIFE ANALOGY",
+                "visual_content": "  [Big Doll (n=3)]\n     └──> [Medium Doll (n=2)]\n            └──> [Tiny Doll (n=1)]\n                   └──> 🛑 [Solid Base Case]"
+            },
+            {
+                "scene_number": 2,
+                "headline": "Under The Hood: The Call Stack",
+                "narration": "Every recursive call pauses and pushes memory onto the call stack. Once the base case triggers, answers bubble back up to solve the original question.",
+                "bullets": ["Step 1: Function calls itself with smaller input", "Step 2: Stack frames accumulate in memory", "Step 3: Unwinding resolves return values"],
+                "visual_type": "mechanism",
+                "visual_title": "EXECUTION CALL STACK",
+                "visual_content": "  |  factorial(1) = 1 (Base Case)  |  ↑ Unwinds\n  |  factorial(2) = 2 * fact(1)    |  ↑ Returns\n  |  factorial(3) = 3 * fact(2)    |  ↑ Final Sol\n  └────────────────────────────────┘"
+            },
+            {
+                "scene_number": 3,
+                "headline": "Clean Implementation in Action",
+                "narration": "Here is recursion in code. Notice the two golden rules: check the base case first, then reduce your input toward it.",
+                "bullets": ["Rule 1: Base case halts infinite loops", "Rule 2: Recursive step converges to base", "Clean and mathematically expressive"],
+                "visual_type": "code",
+                "visual_title": "RECURSIVE FUNCTION",
+                "visual_content": "def factorial(n):\n    # 1. Base Case\n    if n <= 1:\n        return 1\n    # 2. Recursive Step\n    return n * factorial(n - 1)\n\nprint(factorial(5)) # Output: 120"
+            },
+            {
+                "scene_number": 4,
+                "headline": "Pro-Tip: Stack Overflow & Complexity",
+                "narration": "Always guard your base case to avoid a Stack Overflow. Use recursion for divide-and-conquer, trees, and graphs for clean, readable solutions.",
+                "bullets": ["Time Complexity: O(N) linear calls", "Space Complexity: O(N) call stack depth", "Pro-Tip: Guard base case to prevent crash"],
+                "visual_type": "summary",
+                "visual_title": "KEY TAKEAWAY",
+                "visual_content": "  ⚡ GOLDEN RULE:\n  Base Case First, Then Recurse.\n\n  Mastered with KitAi Spaced Repetition!"
+            }
+        ]
+
+    # Curated generic fallback template tailored to the topic
     return [
         {
             "scene_number": 1,
@@ -536,10 +584,7 @@ async def generate_animated_explainer_video(
             str(clip_path)
         ]
 
-        proc = await asyncio.create_subprocess_exec(
-            *clip_cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-        )
-        await proc.communicate()
+        await asyncio.to_thread(_exec_cmd, clip_cmd)
         scene_clips.append(clip_path)
 
     # 3. Concatenate Scene Clips into Final Video
@@ -561,10 +606,7 @@ async def generate_animated_explainer_video(
         str(final_video_path)
     ]
 
-    proc = await asyncio.create_subprocess_exec(
-        *concat_cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
-    )
-    await proc.communicate()
+    await asyncio.to_thread(_exec_cmd, concat_cmd)
 
     # Clean up temp frames
     try:

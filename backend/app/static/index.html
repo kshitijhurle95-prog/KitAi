@@ -2278,11 +2278,11 @@
       container.classList.add('hidden');
       actions.classList.add('hidden');
 
-      // Adjust aspect ratio container
+      // Adjust aspect ratio container while keeping it hidden until ready
       if (orientation === 'portrait') {
-        container.className = "rounded-xl overflow-hidden border border-[#e2e8f0] dark:border-[#334155] bg-black aspect-[9/16] max-h-[460px] mx-auto flex items-center justify-center";
+        container.className = "hidden rounded-xl overflow-hidden border border-[#e2e8f0] dark:border-[#334155] bg-black aspect-[9/16] max-h-[460px] mx-auto flex items-center justify-center";
       } else {
-        container.className = "rounded-xl overflow-hidden border border-[#e2e8f0] dark:border-[#334155] bg-black aspect-video w-full flex items-center justify-center";
+        container.className = "hidden rounded-xl overflow-hidden border border-[#e2e8f0] dark:border-[#334155] bg-black aspect-video w-full flex items-center justify-center";
       }
 
       try {
@@ -2300,10 +2300,13 @@
         if (data.video_url) {
           const v = document.getElementById('video-player');
           v.src = data.video_url;
+          v.load();
           container.classList.remove('hidden');
           actions.classList.remove('hidden');
           document.getElementById('video-download-btn').href = data.video_url;
-          v.play();
+          v.play().catch(e => console.log("Autoplay:", e));
+        } else {
+          alert("Video generation notice: " + (data.detail || "Unable to generate video. Please try again."));
         }
       } catch (err) {
         alert("Video generation failed: " + err.message);
