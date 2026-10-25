@@ -1,0 +1,477 @@
+{
+  "directed": true,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "category": "CS",
+      "id": "Variables & Data Types"
+    },
+    {
+      "category": "CS",
+      "id": "Control Flow (If/Else, Loops)"
+    },
+    {
+      "category": "CS",
+      "id": "Functions & Scope"
+    },
+    {
+      "category": "CS",
+      "id": "Recursion"
+    },
+    {
+      "category": "CS",
+      "id": "Data Structures (Arrays, Lists)"
+    },
+    {
+      "category": "CS",
+      "id": "Hash Maps & Sets"
+    },
+    {
+      "category": "CS",
+      "id": "Trees & Graphs"
+    },
+    {
+      "category": "CS",
+      "id": "Graph Search (BFS & DFS)"
+    },
+    {
+      "category": "CS",
+      "id": "Dynamic Programming"
+    },
+    {
+      "category": "Math",
+      "id": "Basic Algebra"
+    },
+    {
+      "category": "Math",
+      "id": "Functions & Graphs"
+    },
+    {
+      "category": "AI",
+      "id": "Calculus (Derivatives)"
+    },
+    {
+      "category": "Math",
+      "id": "Calculus (Integrals)"
+    },
+    {
+      "category": "AI",
+      "id": "Linear Algebra (Vectors & Matrices)"
+    },
+    {
+      "category": "AI",
+      "id": "Gradient Descent & Optimization"
+    },
+    {
+      "category": "AI",
+      "id": "Neural Networks Architecture"
+    },
+    {
+      "category": "AI",
+      "id": "Deep Learning Training"
+    },
+    {
+      "category": "AI",
+      "id": "Transformers & Attention Mechanism"
+    },
+    {
+      "category": "AI",
+      "id": "Large Language Models"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Code"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Write a python function to check if a wo"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Conceptual"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Can you explain how quicksort works?"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Explain what a Binary Search Tree is and"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Explain recursion with a fun real-world"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "write a c++ code for adding  3 numbers"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "write a c++ code for adding 3 numbers"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Write a python function to find the maxi"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Explain"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Explain recursion in one sentence"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Write a python function to compute fibon"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Solve this coding problem in C++ / Pytho"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Generate structured study notes on Data"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "write a python function to check if a wo"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "explain how binary search works in simpl"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "solve two sum in C++"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Math"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "solve 2x + 5 = 15"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Write a python function to compute facto"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "explain step by step"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "give the code but dont use any class or"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "write a c++ function to check if a strin"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Write a function in C++ to check if a st"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Factual"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "fbfhbhbfhbhbvhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+    },
+    {
+      "category": "StudyTopic",
+      "id": ""
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Conversational"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "hhhhhhhhhhhhhhhh"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "hey how are you?"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Write a C++ function to check if a strin"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Diagram"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "What color is this image? One word."
+    },
+    {
+      "category": "StudyTopic",
+      "id": "tell me about yourself"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "write a code for adding two no's"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "in python"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "in javascript"
+    },
+    {
+      "category": "StudyTopic",
+      "id": "Who are you?"
+    }
+  ],
+  "edges": [
+    {
+      "relation": "prerequisite_of",
+      "source": "Variables & Data Types",
+      "target": "Control Flow (If/Else, Loops)"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Control Flow (If/Else, Loops)",
+      "target": "Functions & Scope"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Functions & Scope",
+      "target": "Recursion"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Functions & Scope",
+      "target": "Data Structures (Arrays, Lists)"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Recursion",
+      "target": "Dynamic Programming"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Data Structures (Arrays, Lists)",
+      "target": "Hash Maps & Sets"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Data Structures (Arrays, Lists)",
+      "target": "Trees & Graphs"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Trees & Graphs",
+      "target": "Graph Search (BFS & DFS)"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Basic Algebra",
+      "target": "Functions & Graphs"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Basic Algebra",
+      "target": "Linear Algebra (Vectors & Matrices)"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Functions & Graphs",
+      "target": "Calculus (Derivatives)"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Calculus (Derivatives)",
+      "target": "Calculus (Integrals)"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Calculus (Derivatives)",
+      "target": "Gradient Descent & Optimization"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Linear Algebra (Vectors & Matrices)",
+      "target": "Neural Networks Architecture"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Gradient Descent & Optimization",
+      "target": "Deep Learning Training"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Neural Networks Architecture",
+      "target": "Transformers & Attention Mechanism"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Transformers & Attention Mechanism",
+      "target": "Large Language Models"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "Write a python function to check if a wo"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "write a c++ code for adding 3 numbers"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "Write a python function to find the maxi"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "Write a python function to compute fibon"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "Solve this coding problem in C++ / Pytho"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "write a python function to check if a wo"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "solve two sum in C++"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "Write a python function to compute facto"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "give the code but dont use any class or"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "write a c++ function to check if a strin"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "Write a function in C++ to check if a st"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "Write a C++ function to check if a strin"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "write a code for adding two no's"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Code",
+      "target": "in javascript"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Conceptual",
+      "target": "Can you explain how quicksort works?"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Conceptual",
+      "target": "Explain what a Binary Search Tree is and"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Conceptual",
+      "target": "Explain recursion with a fun real-world"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Conceptual",
+      "target": "write a c++ code for adding  3 numbers"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Conceptual",
+      "target": "Generate structured study notes on Data"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Explain",
+      "target": "Explain recursion in one sentence"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Explain",
+      "target": "explain how binary search works in simpl"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Explain",
+      "target": "explain step by step"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Math",
+      "target": "solve 2x + 5 = 15"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Factual",
+      "target": "fbfhbhbfhbhbvhhhhhhhhhhhhhhhhhhhhhhhhhhh"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Factual",
+      "target": ""
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Conversational",
+      "target": "hhhhhhhhhhhhhhhh"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Conversational",
+      "target": "hey how are you?"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Conversational",
+      "target": "tell me about yourself"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Conversational",
+      "target": "in python"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Conversational",
+      "target": "Who are you?"
+    },
+    {
+      "relation": "prerequisite_of",
+      "source": "Diagram",
+      "target": "What color is this image? One word."
+    }
+  ]
+}

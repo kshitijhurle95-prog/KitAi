@@ -1,0 +1,2627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KitAi — Learn Smarter</title>
+  <link rel="icon" type="image/png" href="/kitai-logo-round.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+    
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --surface: #ffffff;
+      --surface-subtle: #f8fafc;
+      --border-subtle: #f1f5f9;
+      --border-default: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-main);
+      background-color: #ffffff;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* KitAi Premium Circular Logo with Gradient Border */
+    .kitai-logo-circle {
+      position: relative;
+      border-radius: 9999px;
+      padding: 2px;
+      background: linear-gradient(135deg, #0052d4 0%, #4364f7 50%, #6fb1fc 100%);
+      box-shadow: 0 0 14px -1px rgba(67, 100, 247, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .kitai-logo-circle:hover {
+      box-shadow: 0 0 20px -1px rgba(67, 100, 247, 0.65);
+      transform: scale(1.05);
+    }
+    .kitai-logo-circle .inner-disc {
+      border-radius: 9999px;
+      background: #ffffff;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+    html.dark .kitai-logo-circle .inner-disc {
+      background: #171717;
+    }
+    .kitai-logo-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Smooth sidebar transition without content jumping */
+    .sidebar-transition {
+      transition: width 200ms cubic-bezier(0.4, 0, 0.2, 1), transform 200ms cubic-bezier(0.4, 0, 0.2, 1), opacity 200ms ease;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* Text Selection Rules: Enable text selection inside messages & code */
+    .prose pre,
+    .prose code,
+    .code-window,
+    .code-window pre,
+    .code-window code,
+    #messages-view,
+    #messages-view * {
+      user-select: text !important;
+      -webkit-user-select: text !important;
+    }
+
+    /* Inline Code */
+    .prose code:not(pre code) {
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.375rem;
+      font-size: 0.875em;
+      font-weight: 500;
+    }
+
+    /* ======================================================== */
+    /* NOVASTUDY CODE WINDOW (Exact Match to Reference Image)  */
+    /* ======================================================== */
+    .code-window {
+      background-color: #141416 !important;
+      border-radius: 28px !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      padding: 22px 26px 26px 26px !important;
+      margin: 1.25rem 0 !important;
+      box-shadow: 0 14px 34px -4px rgba(0, 0, 0, 0.5) !important;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .code-window-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 2px;
+    }
+
+    .code-window-lang {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+      user-select: none;
+    }
+
+    .code-window-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .code-window-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #cbd5e1;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 8px;
+      transition: all 150ms ease;
+    }
+
+    .code-window-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+      transform: scale(1.06);
+    }
+
+    .code-window pre {
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow-x: auto;
+    }
+
+    .code-window pre code {
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace !important;
+      font-size: 15px !important;
+      line-height: 1.75 !important;
+      color: #ffffff !important;
+      background: transparent !important;
+      display: block;
+      white-space: pre;
+      tab-size: 4;
+    }
+
+    /* -------------------------------------------------------- */
+    /* Syntax Highlighting Colors matching Reference Screenshot */
+    /* -------------------------------------------------------- */
+    /* Coral Red: #include, headers, meta */
+    .code-window .hljs-meta,
+    .code-window .hljs-meta .hljs-keyword,
+    .code-window .hljs-meta .hljs-string {
+      color: #e0565b !important;
+    }
+
+    /* Periwinkle / Slate-Blue: types like bool, int, const, void, string */
+    .code-window .hljs-type,
+    .code-window .hljs-built_in {
+      color: #7a8cfd !important;
+    }
+
+    /* Warm Golden Yellow: function names like isPalindrome, main */
+    .code-window .hljs-title,
+    .code-window .hljs-title.function_,
+    .code-window .hljs-function {
+      color: #facc15 !important;
+    }
+
+    /* Cornflower / Sky Blue: control flow keywords like while, if, else, return */
+    .code-window .hljs-keyword {
+      color: #60a5fa !important;
+    }
+
+    /* Pink / Rose: booleans true, false */
+    .code-window .hljs-literal {
+      color: #f472b6 !important;
+    }
+
+    /* Mint / Grass Green: strings "racecar" */
+    .code-window .hljs-string {
+      color: #4ade80 !important;
+    }
+
+    /* Purple / Violet: numbers 0, 1 */
+    .code-window .hljs-number {
+      color: #c084fc !important;
+    }
+
+    /* Pure crisp white: punctuation, variables, operators */
+    .code-window .hljs-punctuation,
+    .code-window .hljs-operator,
+    .code-window .hljs-subst,
+    .code-window .hljs-variable,
+    .code-window .hljs-params {
+      color: #ffffff !important;
+    }
+
+    /* Muted Slate: comments (if requested) */
+    .code-window .hljs-comment {
+      color: #64748b !important;
+      font-style: italic;
+    }
+
+    /* Selection highlight */
+    .code-window ::selection {
+      background: rgba(99, 102, 241, 0.4) !important;
+      color: #ffffff !important;
+    }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(4px);
+    }
+
+    /* ======================================================== */
+    /* TOP NAVBAR (Reduced height, borderless, transparent, NO blur)*/
+    /* ======================================================== */
+    #top-navbar {
+      height: 48px !important;
+      background: transparent !important;
+      background-color: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border: none !important;
+      border-bottom: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Bottom Section Container: 100% transparent, NO blur on the container */
+    #bottom-composer-section {
+      background: transparent !important;
+      background-color: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    /* ======================================================== */
+    /* SEARCH INPUT CAPSULE (Light Mode: Black Font/Border/Icons)*/
+    /* ======================================================== */
+    #composer-input-card {
+      border-radius: 9999px !important;
+      border: 1.5px solid #000000 !important;
+      color: #000000 !important;
+      background: transparent !important;
+      background-color: transparent !important;
+      backdrop-filter: blur(20px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
+      transition: border-radius 200ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+    #composer-input-card.is-expanded {
+      border-radius: 24px !important;
+    }
+    #composer-input-card:focus-within {
+      border-color: #000000 !important;
+      box-shadow: 0 6px 24px -2px rgba(0, 0, 0, 0.12) !important;
+    }
+    #composer-input-card.drag-over {
+      border-color: #4f46e5 !important;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25) !important;
+    }
+    #composer-input-card i,
+    #composer-input-card svg,
+    #composer-input-card button {
+      color: #000000 !important;
+    }
+    #composer-divider {
+      background-color: #000000 !important;
+      opacity: 0.3 !important;
+    }
+    #composer-textarea {
+      background: transparent !important;
+      background-color: transparent !important;
+      color: #000000 !important;
+    }
+    #composer-textarea::placeholder {
+      color: #555555 !important;
+    }
+    #model-pill-btn {
+      color: #000000 !important;
+      border: 1px solid rgba(0, 0, 0, 0.25) !important;
+      background-color: rgba(0, 0, 0, 0.04) !important;
+    }
+    #model-pill-btn:hover {
+      background-color: rgba(0, 0, 0, 0.08) !important;
+    }
+    #composer-send-btn {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+    }
+    #composer-send-btn i,
+    #composer-send-btn svg {
+      color: #ffffff !important;
+    }
+
+    /* Dropdown Menus */
+    #plus-dropdown-menu,
+    #tools-dropdown-menu,
+    #model-dropdown-menu {
+      background-color: #ffffff !important;
+      border: 1px solid rgba(0, 0, 0, 0.1) !important;
+      color: #0f172a !important;
+      box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.15) !important;
+    }
+    #plus-dropdown-menu button,
+    #tools-dropdown-menu button,
+    #model-dropdown-menu button {
+      color: #0f172a !important;
+    }
+    #plus-dropdown-menu button:hover,
+    #tools-dropdown-menu button:hover,
+    #model-dropdown-menu button:hover {
+      background-color: #f1f5f9 !important;
+    }
+    #plus-dropdown-menu .icon-img { color: #38bdf8 !important; }
+    #plus-dropdown-menu .icon-video { color: #a855f7 !important; }
+    #plus-dropdown-menu .icon-doc { color: #22c55e !important; }
+    #plus-dropdown-menu .icon-other { color: #f59e0b !important; }
+
+    /* ======================================================== */
+    /* REAL CHATGPT DARK MODE STYLING                           */
+    /* ======================================================== */
+    html.dark {
+      --surface: #212121;
+      --surface-subtle: #171717;
+      --border-subtle: #2e2e30;
+      --border-default: #38383a;
+      --text-main: #ececec;
+      --text-muted: #9ca3af;
+    }
+
+    html.dark body {
+      background-color: #212121 !important;
+      color: #ececec !important;
+    }
+
+    /* Sidebars (Left & Right): ChatGPT #171717 */
+    html.dark aside,
+    html.dark #left-sidebar,
+    html.dark #right-sidebar {
+      background-color: #171717 !important;
+      border-color: #2e2e30 !important;
+    }
+
+    /* Center Workspace: #212121 */
+    html.dark main {
+      background-color: #212121 !important;
+    }
+
+    /* Header Bars & Section Borders */
+    html.dark header,
+    html.dark .border-b,
+    html.dark .border-t,
+    html.dark .border-r,
+    html.dark .border-l {
+      border-color: #2e2e30 !important;
+    }
+
+    /* White surfaces become deep matte dark #212121 or #171717 */
+    html.dark .bg-white,
+    html.dark .bg-\[\#ffffff\] {
+      background-color: #212121 !important;
+      border-color: #2e2e30 !important;
+    }
+
+    html.dark .bg-\[\#fcfcfd\] {
+      background-color: #171717 !important;
+    }
+
+    html.dark .bg-\[\#f8fafc\] {
+      background-color: #282828 !important;
+      border-color: #38383a !important;
+    }
+
+    html.dark .bg-\[\#f1f5f9\] {
+      background-color: #2e2e32 !important;
+    }
+
+    /* Text colors in Dark Mode */
+    html.dark .text-\[\#0f172a\] {
+      color: #ececec !important;
+    }
+    html.dark .text-\[\#1e293b\],
+    html.dark .text-\[\#334155\],
+    html.dark .text-\[\#475569\] {
+      color: #d1d5db !important;
+    }
+    html.dark .text-\[\#64748b\],
+    html.dark .text-\[\#94a3b8\] {
+      color: #9ca3af !important;
+    }
+
+    /* User message bubble: ChatGPT dark rounded surface #2f2f2f */
+    html.dark .user-bubble,
+    html.dark #messages-view .bg-\[\#f1f5f9\] {
+      background-color: #2f2f2f !important;
+      color: #ececec !important;
+      border: 1px solid #38383a !important;
+    }
+
+    /* Assistant prose text */
+    html.dark .prose {
+      color: #ececec !important;
+    }
+    html.dark .prose * {
+      color: #ececec;
+    }
+    html.dark .prose code:not(pre code) {
+      background: #2e2e32 !important;
+      color: #f3f4f6 !important;
+      border: 1px solid #38383a !important;
+    }
+
+    /* Top Navbar in Dark Mode: reduced height, borderless, transparent, NO blur */
+    html.dark #top-navbar {
+      height: 48px !important;
+      background: transparent !important;
+      background-color: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      border: none !important;
+      border-bottom: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Bottom Section Container in Dark Mode: 100% transparent, NO blur */
+    html.dark #bottom-composer-section {
+      background: transparent !important;
+      background-color: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    /* Search Input Card in Dark Mode: White Font/Border/Icons, capsule */
+    html.dark #composer-input-card {
+      border-radius: 9999px !important;
+      border: 1.5px solid #ffffff !important;
+      color: #ffffff !important;
+      background: transparent !important;
+      background-color: transparent !important;
+      backdrop-filter: blur(20px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+      box-shadow: 0 6px 26px -2px rgba(0, 0, 0, 0.45) !important;
+      transition: border-radius 200ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+    html.dark #composer-input-card.is-expanded {
+      border-radius: 24px !important;
+    }
+    html.dark #composer-input-card:focus-within {
+      border-color: #ffffff !important;
+      box-shadow: 0 8px 30px -2px rgba(255, 255, 255, 0.15) !important;
+    }
+    html.dark #composer-input-card.drag-over {
+      border-color: #818cf8 !important;
+      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.35) !important;
+    }
+    html.dark #composer-input-card i,
+    html.dark #composer-input-card svg,
+    html.dark #composer-input-card button {
+      color: #ffffff !important;
+    }
+    html.dark #composer-divider {
+      background-color: #ffffff !important;
+      opacity: 0.3 !important;
+    }
+    html.dark #composer-textarea {
+      color: #ffffff !important;
+    }
+    html.dark #composer-textarea::placeholder {
+      color: #999999 !important;
+    }
+    html.dark #model-pill-btn {
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    html.dark #model-pill-btn:hover {
+      background-color: rgba(255, 255, 255, 0.16) !important;
+    }
+    html.dark #composer-send-btn {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+    }
+    html.dark #composer-send-btn i,
+    html.dark #composer-send-btn svg {
+      color: #000000 !important;
+    }
+
+    /* Dark Mode Dropdowns */
+    html.dark #plus-dropdown-menu,
+    html.dark #tools-dropdown-menu,
+    html.dark #model-dropdown-menu {
+      background-color: #1e1f20 !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      color: #ffffff !important;
+      box-shadow: 0 20px 40px -4px rgba(0, 0, 0, 0.6) !important;
+    }
+    html.dark #plus-dropdown-menu button,
+    html.dark #tools-dropdown-menu button,
+    html.dark #model-dropdown-menu button {
+      color: #ffffff !important;
+    }
+    html.dark #plus-dropdown-menu button:hover,
+    html.dark #tools-dropdown-menu button:hover,
+    html.dark #model-dropdown-menu button:hover {
+      background-color: rgba(255, 255, 255, 0.08) !important;
+    }
+    html.dark #api-status-pill {
+      background-color: rgba(16, 185, 129, 0.12) !important;
+      color: #6ee7b7 !important;
+      border-color: rgba(16, 185, 129, 0.25) !important;
+    }
+
+    /* Action Cards (Welcome screen) */
+    html.dark #welcome-dashboard button {
+      background-color: #212121 !important;
+      border-color: #2e2e30 !important;
+    }
+    html.dark #welcome-dashboard button:hover {
+      background-color: #282828 !important;
+      border-color: #3e3e42 !important;
+    }
+
+    /* Study / Create Segmented Control */
+    html.dark .bg-\[\#f1f5f9\]\/80 {
+      background-color: #171717 !important;
+      border-color: #2e2e30 !important;
+    }
+    html.dark #seg-study.bg-\[\#ffffff\],
+    html.dark #seg-create.bg-\[\#ffffff\] {
+      background-color: #2f2f2f !important;
+      color: #818cf8 !important;
+    }
+
+    /* Right Sidebar Cards */
+    html.dark #right-sidebar .bg-\[\#ffffff\],
+    html.dark #right-sidebar button {
+      background-color: #212121 !important;
+      border-color: #2e2e30 !important;
+    }
+    html.dark #right-sidebar button:hover {
+      background-color: #282828 !important;
+      border-color: #38383a !important;
+    }
+
+    /* Modals in Dark Mode */
+    html.dark .bg-white.rounded-2xl {
+      background-color: #212121 !important;
+      border: 1px solid #2e2e30 !important;
+    }
+
+    /* Form Inputs inside Modals */
+    html.dark input,
+    html.dark select {
+      background-color: #171717 !important;
+      border-color: #2e2e30 !important;
+      color: #ececec !important;
+    }
+
+    /* Premium Glow Colors for Buttons & Icons in Dark Mode */
+    html.dark .text-\[\#4f46e5\] {
+      color: #818cf8 !important; /* glowing indigo */
+    }
+    html.dark .bg-\[\#eef2ff\] {
+      background-color: rgba(99, 102, 241, 0.16) !important;
+      color: #a5b4fc !important;
+    }
+    html.dark .text-\[\#9333ea\] {
+      color: #c084fc !important; /* purple */
+    }
+    html.dark .bg-\[\#f5f3ff\] {
+      background-color: rgba(168, 85, 247, 0.16) !important;
+      color: #d8b4fe !important;
+    }
+    html.dark .text-\[\#e11d48\] {
+      color: #fb7185 !important; /* rose */
+    }
+    html.dark .bg-\[\#fff1f2\] {
+      background-color: rgba(244, 63, 94, 0.16) !important;
+      color: #fda4af !important;
+    }
+    html.dark .text-\[\#16a34a\] {
+      color: #34d399 !important; /* emerald */
+    }
+    html.dark .bg-\[\#f0fdf4\] {
+      background-color: rgba(16, 185, 129, 0.16) !important;
+      color: #6ee7b7 !important;
+    }
+    html.dark .text-\[\#0284c7\],
+    html.dark .text-\[\#2563eb\] {
+      color: #38bdf8 !important; /* sky */
+    }
+    html.dark .bg-\[\#f0f9ff\],
+    html.dark .bg-\[\#eff6ff\] {
+      background-color: rgba(14, 165, 233, 0.16) !important;
+      color: #7dd3fc !important;
+    }
+    html.dark .text-\[\#d97706\] {
+      color: #fbbf24 !important; /* amber */
+    }
+    html.dark .bg-\[\#fffbeb\] {
+      background-color: rgba(245, 158, 11, 0.16) !important;
+      color: #fde68a !important;
+    }
+    html.dark #composer-send-btn {
+      background-color: #ececec !important;
+      color: #171717 !important;
+    }
+    html.dark #composer-send-btn i {
+      color: #171717 !important;
+    }
+  </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col bg-white">
+
+  <!-- Desktop App Shell (3-Column Layout) -->
+  <div class="flex-1 flex w-full h-full overflow-hidden relative">
+
+    <!-- ========================================== -->
+    <!-- COLUMN A: LEFT SIDEBAR (Navigation & History) -->
+    <!-- ========================================== -->
+    <aside id="left-sidebar" class="sidebar-transition w-64 h-full bg-[#fcfcfd] border-r border-[#f1f3f5] flex flex-col justify-between shrink-0 z-20 overflow-hidden relative">
+      
+      <!-- Top Branding & Navigation -->
+      <div class="flex flex-col h-full overflow-hidden">
+        
+        <!-- Branding Bar -->
+        <div class="h-16 px-4 flex items-center justify-between border-b border-[#f1f3f5] shrink-0">
+          <div class="flex items-center gap-3 overflow-hidden sidebar-text group cursor-pointer" onclick="startNewChat()">
+            <!-- Rounded Circular Logo with Gradient Matching Border -->
+            <div class="kitai-logo-circle w-9 h-9 shrink-0">
+              <div class="inner-disc">
+                <img src="/kitai-logo-round.png" alt="KitAi Logo">
+              </div>
+            </div>
+            <div class="flex flex-col truncate leading-tight">
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-[16px] tracking-tight bg-gradient-to-r from-[#0052d4] via-[#2563eb] to-[#0ea5e9] bg-clip-text text-transparent">KitAi</span>
+                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-[#0284c7] border border-blue-200/60 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-800/40 uppercase tracking-wider">AI</span>
+              </div>
+              <span class="text-[11px] text-[#94a3b8] font-medium">Learn Smarter</span>
+            </div>
+          </div>
+          <!-- Collapse Button -->
+          <button onclick="toggleLeftSidebar()" class="p-1.5 text-[#94a3b8] hover:text-[#0f172a] hover:bg-[#f1f5f9] rounded-lg transition" title="Toggle Sidebar">
+            <i data-lucide="panel-left-close" class="w-4 h-4" id="left-collapse-icon"></i>
+          </button>
+        </div>
+
+        <!-- Primary Navigation -->
+        <div class="p-3 space-y-1 shrink-0 border-b border-[#f1f3f5]">
+          <!-- New Chat Button (Pill with pale indigo background) -->
+          <button onclick="startNewChat()" class="w-full h-10 px-3 rounded-xl bg-[#eef2ff] text-[#4f46e5] font-semibold text-[13px] flex items-center gap-2.5 hover:bg-[#e0e7ff] transition shadow-xs group">
+            <i data-lucide="edit-3" class="w-4 h-4 shrink-0"></i>
+            <span class="sidebar-text truncate">New Chat</span>
+          </button>
+
+          <!-- Nav Items -->
+          <button onclick="switchView('explore')" id="nav-explore" class="w-full h-9 px-3 rounded-xl text-[#475569] font-medium text-[13px] flex items-center gap-2.5 hover:bg-[#f8fafc] hover:text-[#0f172a] transition">
+            <i data-lucide="compass" class="w-4 h-4 shrink-0 text-[#64748b]"></i>
+            <span class="sidebar-text truncate">Explore</span>
+          </button>
+          <button onclick="openStudyToolsModal()" id="nav-tools" class="w-full h-9 px-3 rounded-xl text-[#475569] font-medium text-[13px] flex items-center gap-2.5 hover:bg-[#f8fafc] hover:text-[#0f172a] transition">
+            <i data-lucide="layout-grid" class="w-4 h-4 shrink-0 text-[#64748b]"></i>
+            <span class="sidebar-text truncate">Study Tools</span>
+          </button>
+          <button onclick="openLibraryModal()" id="nav-library" class="w-full h-9 px-3 rounded-xl text-[#475569] font-medium text-[13px] flex items-center gap-2.5 hover:bg-[#f8fafc] hover:text-[#0f172a] transition">
+            <i data-lucide="book-open" class="w-4 h-4 shrink-0 text-[#64748b]"></i>
+            <span class="sidebar-text truncate">Library</span>
+          </button>
+        </div>
+
+        <!-- Chats History List -->
+        <div class="flex-1 overflow-y-auto px-3 py-2 custom-scrollbar sidebar-text space-y-3">
+          
+          <!-- Search Chats Input -->
+          <div class="px-1 pt-1 pb-1">
+            <div class="relative flex items-center">
+              <i data-lucide="search" class="w-3.5 h-3.5 text-[#94a3b8] absolute left-2.5 pointer-events-none"></i>
+              <input type="text" id="chat-search-input" oninput="filterChatHistory(this.value)" placeholder="Search chats..."
+                class="w-full bg-[#f1f5f9]/80 hover:bg-[#f1f5f9] focus:bg-white text-[12px] text-[#0f172a] placeholder-[#94a3b8] rounded-xl pl-8 pr-2 py-1.5 border border-transparent focus:border-[#cbd5e1] focus:outline-none transition">
+            </div>
+          </div>
+
+          <!-- Today Section -->
+          <div>
+            <div class="px-2 pb-1 text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Today</div>
+            <div id="history-today" class="space-y-0.5">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Yesterday Section -->
+          <div>
+            <div class="px-2 pb-1 text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider">Yesterday</div>
+            <div id="history-yesterday" class="space-y-0.5">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom User Profile Area -->
+        <div class="p-3 border-t border-[#f1f3f5] bg-[#ffffff] flex items-center justify-between shrink-0">
+          <div class="flex items-center gap-2.5 overflow-hidden">
+            <!-- User Avatar with Initials/Photo -->
+            <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#6366f1] to-[#a855f7] flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-xs">
+              K
+            </div>
+            <div class="flex flex-col truncate leading-tight sidebar-text">
+              <span class="text-[13px] font-semibold text-[#0f172a] truncate">Kshitij</span>
+              <span class="text-[11px] text-emerald-600 font-medium" id="profile-status-label">Free Plan • API Ready</span>
+            </div>
+          </div>
+          <!-- Settings Icon -->
+          <button onclick="openSettingsModal()" class="p-1.5 text-[#64748b] hover:text-[#0f172a] hover:bg-[#f8fafc] rounded-lg transition" title="Open Settings">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- ========================================== -->
+    <!-- COLUMN B: CENTER WORKSPACE (Main Interface)-->
+    <!-- ========================================== -->
+    <main class="flex-1 h-full bg-[#ffffff] flex flex-col overflow-hidden relative">
+
+      <!-- Top Header Controls Bar (Compact h-12, borderless, transparent blur) -->
+      <header id="top-navbar" class="h-12 px-6 flex items-center justify-between shrink-0 absolute top-0 left-0 right-0 z-30 transition border-0">
+        
+        <!-- Left Mobile Sidebar Toggle & Live API Status Pill -->
+        <div class="flex items-center gap-2">
+          <button onclick="toggleLeftSidebar()" id="left-mobile-toggle" class="p-1.5 text-[#64748b] hover:text-[#0f172a] hover:bg-[#f8fafc] rounded-lg transition hidden">
+            <i data-lucide="panel-left-open" class="w-4 h-4"></i>
+          </button>
+          <button onclick="openSettingsModal()" id="api-status-pill" class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 hover:bg-emerald-100 transition shadow-2xs" title="Groq API Status — Click to configure">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="api-status-label">AI Ready</span>
+          </button>
+        </div>
+
+        <!-- Upper-Right Controls: Search, Theme Toggle, Right Sidebar Toggle -->
+        <div class="flex items-center gap-1.5 ml-auto">
+          <button onclick="openSearchModal()" class="p-1.5 text-[#64748b] hover:text-[#0f172a] hover:bg-[#f8fafc] rounded-lg transition" title="Search Everything (Ctrl+K)">
+            <i data-lucide="search" class="w-4 h-4"></i>
+          </button>
+          <button onclick="toggleTheme()" id="theme-toggle-btn" class="p-1.5 text-[#64748b] hover:text-[#0f172a] hover:bg-[#f8fafc] rounded-lg transition" title="Toggle Light/Dark Theme">
+            <i data-lucide="moon" class="w-4 h-4"></i>
+          </button>
+          <!-- Right Sidebar Toggle -->
+          <button onclick="toggleRightSidebar()" class="p-1.5 text-[#64748b] hover:text-[#0f172a] hover:bg-[#f8fafc] rounded-lg transition" title="Toggle Tools Panel">
+            <i data-lucide="panel-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Center Scrollable Container (Welcome View OR Messages View) -->
+      <div id="center-scroll-container" class="w-full h-full overflow-y-auto px-6 lg:px-16 pt-16 pb-36 custom-scrollbar flex flex-col justify-between">
+        
+        <!-- Welcome Dashboard Section (Visible when new/empty chat) -->
+        <div id="welcome-dashboard" class="max-w-4xl w-full mx-auto flex flex-col items-center justify-center my-auto py-6">
+          
+          <!-- Large Centered Greeting -->
+          <div class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-[#0f172a] mb-2 flex items-center justify-center gap-2">
+              Hey <span class="text-[#4f46e5]">Kshitij</span> <span class="inline-block hover:rotate-12 transition transform cursor-default">👋</span>
+            </h1>
+            <p class="text-[16px] text-[#64748b] font-normal">
+              What would you like to learn today?
+            </p>
+          </div>
+
+          <!-- Four Action Cards (Horizontal grid of 4 cards) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full mb-8">
+            
+            <!-- Card 1: Solve a Coding Problem -->
+            <button onclick="selectActionCard('code')" class="p-4 rounded-2xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-sm text-left transition flex flex-col justify-between h-36 group">
+              <div class="w-9 h-9 rounded-xl bg-[#eef2ff] flex items-center justify-center text-[#4f46e5]">
+                <i data-lucide="code" class="w-4 h-4"></i>
+              </div>
+              <div class="flex items-center justify-between w-full mt-2">
+                <span class="text-[14px] font-semibold text-[#0f172a] leading-snug">Solve a<br>Coding Problem</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-[#4f46e5] group-hover:translate-x-0.5 transition"></i>
+              </div>
+            </button>
+
+            <!-- Card 2: Explain a Concept -->
+            <button onclick="selectActionCard('explain')" class="p-4 rounded-2xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-sm text-left transition flex flex-col justify-between h-36 group">
+              <div class="w-9 h-9 rounded-xl bg-[#f5f3ff] flex items-center justify-center text-[#9333ea]">
+                <i data-lucide="book-open" class="w-4 h-4"></i>
+              </div>
+              <div class="flex items-center justify-between w-full mt-2">
+                <span class="text-[14px] font-semibold text-[#0f172a] leading-snug">Explain a<br>Concept</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-[#9333ea] group-hover:translate-x-0.5 transition"></i>
+              </div>
+            </button>
+
+            <!-- Card 3: Generate Animated Video -->
+            <button onclick="selectActionCard('video')" class="p-4 rounded-2xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-sm text-left transition flex flex-col justify-between h-36 group">
+              <div class="w-9 h-9 rounded-xl bg-[#fff1f2] flex items-center justify-center text-[#e11d48]">
+                <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+              </div>
+              <div class="flex items-center justify-between w-full mt-2">
+                <span class="text-[14px] font-semibold text-[#0f172a] leading-snug">Generate<br>Animated Video</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-[#e11d48] group-hover:translate-x-0.5 transition"></i>
+              </div>
+            </button>
+
+            <!-- Card 4: Analyze Image / Diagram -->
+            <button onclick="selectActionCard('image')" class="p-4 rounded-2xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-sm text-left transition flex flex-col justify-between h-36 group">
+              <div class="w-9 h-9 rounded-xl bg-[#f0fdf4] flex items-center justify-center text-[#16a34a]">
+                <i data-lucide="image" class="w-4 h-4"></i>
+              </div>
+              <div class="flex items-center justify-between w-full mt-2">
+                <span class="text-[14px] font-semibold text-[#0f172a] leading-snug">Analyze<br>Image / Diagram</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 text-[#16a34a] group-hover:translate-x-0.5 transition"></i>
+              </div>
+            </button>
+
+          </div>
+
+          <!-- Suggested Prompts Chips -->
+          <div class="flex flex-wrap items-center justify-center gap-2 text-xs text-[#64748b]">
+            <span class="font-medium mr-1 text-[#475569]">Try asking:</span>
+            <div id="prompt-chips" class="flex flex-wrap items-center justify-center gap-2">
+              <button onclick="fillPrompt('Explain recursion like I\'m 15')" class="px-3 py-1.5 rounded-full bg-[#f8fafc] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:bg-[#ffffff] text-[#334155] transition">
+                Explain recursion like I'm 15
+              </button>
+              <button onclick="fillPrompt('Create a video on photosynthesis')" class="px-3 py-1.5 rounded-full bg-[#f8fafc] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:bg-[#ffffff] text-[#334155] transition">
+                Create a video on photosynthesis
+              </button>
+              <button onclick="fillPrompt('Solve this LeetCode problem: Two Sum in C++')" class="px-3 py-1.5 rounded-full bg-[#f8fafc] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:bg-[#ffffff] text-[#334155] transition">
+                Solve this LeetCode problem
+              </button>
+              <button onclick="fillPrompt('Explain the differences between DFS and BFS with diagrams')" class="px-3 py-1.5 rounded-full bg-[#f8fafc] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:bg-[#ffffff] text-[#334155] transition">
+                Explain this diagram
+              </button>
+            </div>
+            <button onclick="rotatePromptSuggestions()" class="p-1.5 text-[#94a3b8] hover:text-[#475569] transition" title="Rotate suggestions">
+              <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Active Conversation Messages View -->
+        <div id="messages-view" class="max-w-3xl w-full mx-auto space-y-6 hidden mb-6">
+          <!-- Messages will be rendered here dynamically -->
+        </div>
+
+      </div>
+
+      <!-- Main Input Composer (Capsule bar matching Image 4) -->
+      <div id="bottom-composer-section" class="p-4 md:p-6 bg-transparent absolute bottom-0 left-0 right-0 z-30 pointer-events-none">
+        <div class="max-w-3xl w-full mx-auto pointer-events-auto relative">
+          
+          <!-- Capsule Search Input Bar -->
+          <div id="composer-input-card" class="w-full flex flex-col justify-center px-3 py-2 gap-1.5 relative">
+            
+            <!-- Attachment Preview INSIDE Search Bar -->
+            <div id="attachment-preview-inside" class="hidden flex items-center justify-between gap-2 px-1 pb-1 pt-0.5 border-b border-black/10 dark:border-white/10 w-full">
+              <div id="attachment-preview-body" class="flex items-center gap-2 min-w-0">
+                <!-- Dynamically populated: thumbnail / icon + name + size -->
+              </div>
+              <button type="button" onclick="removeAttachment()" class="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-black/5 dark:hover:bg-white/10 transition shrink-0" title="Remove attachment">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+
+            <!-- Single Input Controls Row -->
+            <div class="w-full flex items-center gap-2">
+
+              <!-- 1. Plus Button (opens dropdown on click) -->
+              <button onclick="togglePlusMenu()" id="composer-plus-btn" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 hover:bg-black/5 dark:hover:bg-white/10 transition" title="Attach file">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+              </button>
+
+              <!-- Plus Dropdown Menu (Image, Video, Documents, Others) -->
+              <div id="plus-dropdown-menu" class="hidden absolute left-2 bottom-full mb-3 w-48 rounded-2xl p-1.5 shadow-2xl z-40 transition">
+                <button onclick="triggerImageUpload()" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-[13px] font-medium transition">
+                  <i data-lucide="image" class="w-4 h-4 icon-img"></i>
+                  <span>Image</span>
+                </button>
+                <button onclick="triggerVideoUpload()" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-[13px] font-medium transition">
+                  <i data-lucide="video" class="w-4 h-4 icon-video"></i>
+                  <span>Video</span>
+                </button>
+                <button onclick="triggerDocumentUpload()" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-[13px] font-medium transition">
+                  <i data-lucide="file-text" class="w-4 h-4 icon-doc"></i>
+                  <span>Documents</span>
+                </button>
+                <button onclick="triggerOtherUpload()" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-[13px] font-medium transition">
+                  <i data-lucide="layout-grid" class="w-4 h-4 icon-other"></i>
+                  <span>Others</span>
+                </button>
+              </div>
+
+              <!-- Hidden File Inputs -->
+              <input type="file" id="image-file-input" accept="image/*" class="hidden" onchange="handleImageFileSelect(event)">
+              <input type="file" id="video-file-input" accept="video/*" class="hidden" onchange="handleVideoFileSelect(event)">
+              <input type="file" id="doc-file-input" accept=".pdf,.doc,.docx,.txt,.csv,.md,.json,.py,.cpp,.c,.java" class="hidden" onchange="handleGenericFileSelect(event)">
+              <input type="file" id="generic-file-input" class="hidden" onchange="handleGenericFileSelect(event)">
+
+              <!-- 2. Divider line -->
+              <div id="composer-divider" class="w-[1px] h-5 shrink-0 mx-0.5"></div>
+
+              <!-- 3. Tools Icon (immediately next to +) -->
+              <div class="relative">
+                <button onclick="toggleToolsMenu()" id="composer-tools-btn" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 hover:bg-black/5 dark:hover:bg-white/10 transition" title="Study Tools">
+                  <i data-lucide="wrench" class="w-4 h-4"></i>
+                </button>
+                <!-- Tools Dropdown Menu -->
+                <div id="tools-dropdown-menu" class="hidden absolute left-0 bottom-full mb-3 w-48 rounded-2xl p-1.5 shadow-2xl z-40 transition">
+                  <button onclick="selectTool('video')" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left text-[13px] font-medium transition">
+                    <i data-lucide="film" class="w-4 h-4 text-[#e11d48]"></i> Explainer Video
+                  </button>
+                  <button onclick="selectTool('flashcards')" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left text-[13px] font-medium transition">
+                    <i data-lucide="copy" class="w-4 h-4 text-[#0284c7]"></i> Flashcards (SRS)
+                  </button>
+                  <button onclick="selectTool('graph')" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left text-[13px] font-medium transition">
+                    <i data-lucide="git-branch" class="w-4 h-4 text-[#9333ea]"></i> Mind Maps
+                  </button>
+                  <button onclick="selectTool('quiz')" class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left text-[13px] font-medium transition">
+                    <i data-lucide="check-square" class="w-4 h-4 text-[#16a34a]"></i> Quiz Practice
+                  </button>
+                </div>
+              </div>
+
+              <!-- 4. Textarea Input -->
+              <div class="flex-1 flex items-center min-w-0 px-1">
+                <textarea id="composer-textarea" rows="1" 
+                  placeholder="Ask anything..."
+                  class="w-full bg-transparent border-0 text-[14px] focus:outline-none resize-none leading-normal custom-scrollbar max-h-28 py-1"
+                  oninput="handleComposerInput(this)"
+                  onkeydown="handleComposerKey(event)"></textarea>
+              </div>
+
+              <!-- 5. Model Selector Pill -->
+              <div class="relative shrink-0">
+                <button onclick="toggleModelDropdown()" id="model-pill-btn" class="h-8 px-2.5 rounded-full flex items-center gap-2 shrink-0 transition text-[12px] font-medium">
+                  <div class="kitai-logo-circle w-4 h-4 p-[1px] shrink-0">
+                    <div class="inner-disc">
+                      <img src="/kitai-logo-round.png" alt="KitAi">
+                    </div>
+                  </div>
+                  <span id="active-model-label">Kit-3.1</span>
+                  <i data-lucide="chevron-down" class="w-3 h-3 opacity-60"></i>
+                </button>
+                <!-- Model Dropdown Menu -->
+                <div id="model-dropdown-menu" class="hidden absolute right-0 bottom-full mb-3 w-56 rounded-2xl p-1.5 shadow-2xl z-40 transition">
+                  <div class="px-3 py-1.5 text-[10px] font-semibold text-[#94a3b8] uppercase tracking-wider">Select AI Model</div>
+                  <button onclick="switchModel('qwen/qwen3.8-27b', 'Kit-3.1')" class="w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-[12px] font-medium transition">
+                    <span>Kit-3.1 (Fast 27B)</span>
+                    <i data-lucide="check" class="w-3.5 h-3.5 text-[#2563eb]"></i>
+                  </button>
+                  <button onclick="switchModel('openai/gpt-oss-120b', 'Kit-Pro')" class="w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-[12px] font-medium transition">
+                    <span class="opacity-80">Kit-Pro (Deep Reasoning)</span>
+                  </button>
+                  <button onclick="switchModel('openai/gpt-oss-20b', 'Kit-Mini')" class="w-full text-left px-3 py-2 rounded-xl flex items-center justify-between text-[12px] font-medium transition">
+                    <span class="opacity-80">Kit-Mini (Sub-second)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 6. Microphone Icon for Audio Input -->
+              <button onclick="toggleAudioRecording()" id="composer-mic-btn" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 hover:bg-black/5 dark:hover:bg-white/10 transition" title="Voice Input">
+                <i data-lucide="mic" class="w-4 h-4"></i>
+              </button>
+
+              <!-- 7. Circular Up-Arrow Send Button -->
+              <button onclick="submitPrompt()" id="composer-send-btn" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition shadow-sm" title="Send message">
+                <i data-lucide="arrow-up" class="w-4 h-4"></i>
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ========================================== -->
+    <!-- COLUMN C: RIGHT SIDEBAR (Study Tools & Activity) -->
+    <!-- ========================================== -->
+    <aside id="right-sidebar" class="sidebar-transition w-72 h-full bg-[#fcfcfd] border-l border-[#f1f3f5] flex flex-col shrink-0 z-20 overflow-y-auto custom-scrollbar p-4 space-y-6">
+      
+      <!-- Top Collapse Toggle -->
+      <div class="flex items-center justify-between pb-1">
+        <span class="text-xs font-semibold text-[#64748b] uppercase tracking-wider">Assistant</span>
+        <button onclick="toggleRightSidebar()" class="p-1 text-[#94a3b8] hover:text-[#0f172a] hover:bg-[#f1f5f9] rounded-lg transition" title="Collapse Panel">
+          <i data-lucide="panel-right-close" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Study Mode Card -->
+      <div onclick="setMainMode('study')" class="p-4 rounded-2xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-xs transition cursor-pointer flex items-center justify-between group">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-[#f5f3ff] flex items-center justify-center text-[#9333ea] shrink-0">
+            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+          </div>
+          <div class="flex flex-col">
+            <span class="text-[14px] font-semibold text-[#0f172a]">Study Mode</span>
+            <span class="text-[11px] text-[#64748b] leading-tight mt-0.5">Get step-by-step learning with examples, visuals and videos.</span>
+          </div>
+        </div>
+        <i data-lucide="chevron-right" class="w-4 h-4 text-[#94a3b8] group-hover:translate-x-0.5 transition shrink-0 ml-1"></i>
+      </div>
+
+      <!-- Tools Grid Section (3-Column Grid of 6 Tools) -->
+      <div>
+        <div class="flex items-center justify-between mb-3 px-1">
+          <span class="text-[13px] font-bold text-[#0f172a]">Tools</span>
+          <button onclick="openStudyToolsModal()" class="text-[12px] font-semibold text-[#4f46e5] hover:underline">See all</button>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <!-- 1. Video Generator -->
+          <button onclick="openVideoModal('Animated Concept Breakdown')" class="p-2.5 rounded-xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-2xs transition flex flex-col items-center text-center group">
+            <div class="w-9 h-9 rounded-xl bg-[#fff1f2] flex items-center justify-center text-[#e11d48] mb-1.5">
+              <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+            </div>
+            <span class="text-[11px] font-semibold text-[#0f172a] leading-tight">Video<br>Generator</span>
+          </button>
+
+          <!-- 2. Flashcards -->
+          <button onclick="openFlashcardsModal()" class="p-2.5 rounded-xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-2xs transition flex flex-col items-center text-center group">
+            <div class="w-9 h-9 rounded-xl bg-[#f0f9ff] flex items-center justify-center text-[#0284c7] mb-1.5">
+              <i data-lucide="file-text" class="w-4 h-4"></i>
+            </div>
+            <span class="text-[11px] font-semibold text-[#0f172a] leading-tight">Flashcards</span>
+          </button>
+
+          <!-- 3. Mind Maps -->
+          <button onclick="openMindMapsModal()" class="p-2.5 rounded-xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-2xs transition flex flex-col items-center text-center group">
+            <div class="w-9 h-9 rounded-xl bg-[#f5f3ff] flex items-center justify-center text-[#9333ea] mb-1.5">
+              <i data-lucide="network" class="w-4 h-4"></i>
+            </div>
+            <span class="text-[11px] font-semibold text-[#0f172a] leading-tight">Mind<br>Maps</span>
+          </button>
+
+          <!-- 4. Quiz -->
+          <button onclick="openQuizModal()" class="p-2.5 rounded-xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-2xs transition flex flex-col items-center text-center group">
+            <div class="w-9 h-9 rounded-xl bg-[#f0fdf4] flex items-center justify-center text-[#16a34a] mb-1.5">
+              <i data-lucide="check-square" class="w-4 h-4"></i>
+            </div>
+            <span class="text-[11px] font-semibold text-[#0f172a] leading-tight">Quiz</span>
+          </button>
+
+          <!-- 5. Notes Maker -->
+          <button onclick="openNotesModal()" class="p-2.5 rounded-xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-2xs transition flex flex-col items-center text-center group">
+            <div class="w-9 h-9 rounded-xl bg-[#fffbeb] flex items-center justify-center text-[#d97706] mb-1.5">
+              <i data-lucide="edit-2" class="w-4 h-4"></i>
+            </div>
+            <span class="text-[11px] font-semibold text-[#0f172a] leading-tight">Notes<br>Maker</span>
+          </button>
+
+          <!-- 6. Diagram Explainer -->
+          <button onclick="openDiagramExplainerModal()" class="p-2.5 rounded-xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-2xs transition flex flex-col items-center text-center group">
+            <div class="w-9 h-9 rounded-xl bg-[#eff6ff] flex items-center justify-center text-[#2563eb] mb-1.5">
+              <i data-lucide="image" class="w-4 h-4"></i>
+            </div>
+            <span class="text-[11px] font-semibold text-[#0f172a] leading-tight">Diagram<br>Explainer</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Recent Sessions Section -->
+      <div>
+        <div class="flex items-center justify-between mb-3 px-1">
+          <span class="text-[13px] font-bold text-[#0f172a]">Recent</span>
+          <button onclick="openLibraryModal()" class="text-[12px] font-semibold text-[#4f46e5] hover:underline">See all</button>
+        </div>
+
+        <div id="recent-sessions-list" class="space-y-2">
+          
+          <!-- Recent Item 1 -->
+          <div onclick="loadChat('Adding 3 numbers in C++')" class="p-2 rounded-xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-2xs transition cursor-pointer flex items-center justify-between group">
+            <div class="flex items-center gap-2.5 overflow-hidden">
+              <div class="w-8 h-8 rounded-lg bg-[#eff6ff] flex items-center justify-center text-[#2563eb] shrink-0">
+                <i data-lucide="code" class="w-4 h-4"></i>
+              </div>
+              <div class="flex flex-col truncate">
+                <span class="text-[12px] font-semibold text-[#0f172a] truncate">Adding 3 numbers in C++</span>
+                <span class="text-[10px] text-[#94a3b8]">2 hours ago</span>
+              </div>
+            </div>
+            <button class="p-1 text-[#94a3b8] hover:text-[#0f172a] transition"><i data-lucide="more-vertical" class="w-3.5 h-3.5"></i></button>
+          </div>
+
+          <!-- Recent Item 2 -->
+          <div onclick="loadChat('Binary Search Explanation')" class="p-2 rounded-xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-2xs transition cursor-pointer flex items-center justify-between group">
+            <div class="flex items-center gap-2.5 overflow-hidden">
+              <div class="w-8 h-8 rounded-lg bg-[#f5f3ff] flex items-center justify-center text-[#9333ea] shrink-0">
+                <i data-lucide="book-open" class="w-4 h-4"></i>
+              </div>
+              <div class="flex flex-col truncate">
+                <span class="text-[12px] font-semibold text-[#0f172a] truncate">Binary Search Explanation</span>
+                <span class="text-[10px] text-[#94a3b8]">5 hours ago</span>
+              </div>
+            </div>
+            <button class="p-1 text-[#94a3b8] hover:text-[#0f172a] transition"><i data-lucide="more-vertical" class="w-3.5 h-3.5"></i></button>
+          </div>
+
+          <!-- Recent Item 3 -->
+          <div onclick="loadChat('Photosynthesis Animation')" class="p-2 rounded-xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-2xs transition cursor-pointer flex items-center justify-between group">
+            <div class="flex items-center gap-2.5 overflow-hidden">
+              <div class="w-8 h-8 rounded-lg bg-[#fff1f2] flex items-center justify-center text-[#e11d48] shrink-0">
+                <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+              </div>
+              <div class="flex flex-col truncate">
+                <span class="text-[12px] font-semibold text-[#0f172a] truncate">Photosynthesis Animation</span>
+                <span class="text-[10px] text-[#94a3b8]">1 day ago</span>
+              </div>
+            </div>
+            <button class="p-1 text-[#94a3b8] hover:text-[#0f172a] transition"><i data-lucide="more-vertical" class="w-3.5 h-3.5"></i></button>
+          </div>
+
+          <!-- Recent Item 4 -->
+          <div onclick="loadChat('Neural Networks Basics')" class="p-2 rounded-xl bg-[#ffffff] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:shadow-2xs transition cursor-pointer flex items-center justify-between group">
+            <div class="flex items-center gap-2.5 overflow-hidden">
+              <div class="w-8 h-8 rounded-lg bg-[#fffbeb] flex items-center justify-center text-[#d97706] shrink-0">
+                <i data-lucide="file-text" class="w-4 h-4"></i>
+              </div>
+              <div class="flex flex-col truncate">
+                <span class="text-[12px] font-semibold text-[#0f172a] truncate">Neural Networks Basics</span>
+                <span class="text-[10px] text-[#94a3b8]">1 day ago</span>
+              </div>
+            </div>
+            <button class="p-1 text-[#94a3b8] hover:text-[#0f172a] transition"><i data-lucide="more-vertical" class="w-3.5 h-3.5"></i></button>
+          </div>
+
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODALS & OVERLAYS                          -->
+  <!-- ========================================== -->
+
+  <!-- 1. Settings & API Modal -->
+  <div id="settings-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white border border-[#e2e8f0] rounded-2xl w-full max-w-lg shadow-xl overflow-hidden flex flex-col">
+      <div class="p-5 border-b border-[#f1f5f9] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="sliders" class="w-5 h-5 text-[#4f46e5]"></i>
+          <h3 class="font-bold text-[15px] text-[#0f172a]">Settings & API Configuration</h3>
+        </div>
+        <button onclick="closeSettingsModal()" class="text-[#94a3b8] hover:text-[#0f172a] p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto custom-scrollbar">
+        <!-- Persistent API Key Status Box (Always Visible) -->
+        <div id="settings-status-box" class="p-3.5 rounded-xl border text-xs bg-emerald-50 border-emerald-200 text-emerald-800 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <div>
+              <div class="font-bold">Groq API Key Active</div>
+              <div class="text-[11px] text-emerald-600 font-mono" id="settings-key-display">Verifying key...</div>
+            </div>
+          </div>
+          <span class="px-2.5 py-0.5 bg-white text-emerald-700 font-semibold rounded border border-emerald-200 shadow-2xs">Verified</span>
+        </div>
+
+        <!-- API Key Input -->
+        <div class="space-y-1.5 pt-1">
+          <div class="flex items-center justify-between">
+            <label class="text-[12px] font-semibold text-[#334155] uppercase tracking-wider">Update API Key (Optional)</label>
+            <a href="https://console.groq.com/keys" target="_blank" class="text-[12px] text-[#4f46e5] hover:underline flex items-center gap-1">
+              Get Key <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+          </div>
+          <div class="relative flex items-center">
+            <input type="password" id="input-api-key" placeholder="Leave blank to keep saved key, or enter new: gsk_..."
+              class="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3.5 py-2 text-sm text-[#0f172a] placeholder-[#94a3b8] focus:outline-none focus:border-[#4f46e5] font-mono pr-10">
+            <button type="button" onclick="toggleApiKeyVisibility()" class="absolute right-3 text-[#94a3b8] hover:text-[#0f172a]">
+              <i data-lucide="eye" id="eye-icon" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <p class="text-[11px] text-[#64748b]">Key is safely stored in backend and browser. Supports Qwen 3.8 27B, GPT-OSS 120B, and Whisper Large v3.</p>
+        </div>
+
+        <!-- AI Model Selection -->
+        <div class="space-y-1.5">
+          <label class="text-[12px] font-semibold text-[#334155] uppercase tracking-wider">Active Model</label>
+          <select id="select-model" class="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-[#4f46e5]">
+            <option value="qwen/qwen3.8-27b">Qwen 3.8 27B (Fast, Highly Recommended)</option>
+            <option value="openai/gpt-oss-120b">OpenAI GPT-OSS 120B (Deep Reasoning)</option>
+            <option value="openai/gpt-oss-20b">OpenAI GPT-OSS 20B (Ultra-Fast)</option>
+          </select>
+        </div>
+
+        <!-- Voice & Language -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="space-y-1.5">
+            <label class="text-[12px] font-semibold text-[#334155] uppercase tracking-wider">Voice (TTS)</label>
+            <select id="select-voice" class="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-[#4f46e5]">
+              <option value="en-US-AriaNeural">Aria (US Female)</option>
+              <option value="en-US-GuyNeural">Guy (US Male)</option>
+              <option value="hi-IN-SwaraNeural">Swara (Hindi Female)</option>
+              <option value="hi-IN-MadhurNeural">Madhur (Hindi Male)</option>
+            </select>
+          </div>
+          <div class="space-y-1.5">
+            <label class="text-[12px] font-semibold text-[#334155] uppercase tracking-wider">Language</label>
+            <select id="select-lang" class="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-3 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-[#4f46e5]">
+              <option value="en">English</option>
+              <option value="hi">Hindi (हिंदी)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Self-Learning Memory Clear -->
+        <div class="pt-3 border-t border-[#f1f5f9] flex items-center justify-between">
+          <div>
+            <div class="text-[13px] font-semibold text-[#0f172a]">Vector Memory</div>
+            <div class="text-[11px] text-[#64748b]">Clear cached experiences in ChromaDB</div>
+          </div>
+          <button onclick="clearMemory()" class="px-3 py-1.5 rounded-lg border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-semibold">
+            Clear Memory
+          </button>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-[#f1f5f9] bg-[#f8fafc] flex items-center justify-end gap-2">
+        <button onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-[#64748b] hover:bg-[#e2e8f0]/50">Cancel</button>
+        <button onclick="saveSettings()" id="btn-save-settings" class="px-5 py-2 rounded-xl text-xs font-semibold bg-[#4f46e5] hover:bg-[#4338ca] text-white shadow-xs flex items-center gap-1.5">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i> Save & Test Key
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Animated Video Studio Modal -->
+  <div id="video-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white border border-[#e2e8f0] rounded-2xl w-full max-w-2xl shadow-xl overflow-hidden flex flex-col">
+      <div class="p-5 border-b border-[#f1f5f9] flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-[#fff1f2] flex items-center justify-center text-[#e11d48]">
+            <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-[15px] text-[#0f172a]">Animated Video Explainer Studio</h3>
+            <p class="text-[11px] text-[#64748b]">3-act educational storyboard, visual slides & neural voice-over</p>
+          </div>
+        </div>
+        <button onclick="closeVideoModal()" class="text-[#94a3b8] hover:text-[#0f172a] p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <div class="space-y-1.5">
+          <label class="text-[12px] font-semibold text-[#334155] uppercase tracking-wider">Concept to Animate</label>
+          <input type="text" id="video-topic-input" placeholder="e.g. Binary Search, Recursion, Gradient Descent"
+            class="w-full bg-[#f8fafc] border border-[#e2e8f0] rounded-xl px-4 py-2 text-sm text-[#0f172a] focus:outline-none focus:border-[#4f46e5]">
+        </div>
+
+        <div id="video-player-container" class="hidden rounded-xl overflow-hidden border border-[#e2e8f0] bg-black aspect-video flex items-center justify-center">
+          <video id="video-player" controls class="w-full h-full object-contain"></video>
+        </div>
+
+        <div id="video-progress" class="hidden p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] space-y-2.5">
+          <div class="flex items-center justify-between text-xs font-medium text-[#475569]">
+            <span class="flex items-center gap-2 text-[#4f46e5]">
+              <i data-lucide="loader-2" class="w-4 h-4 animate-spin text-[#e11d48]"></i>
+              Rendering storyboard & synthesizing speech...
+            </span>
+            <span class="text-[11px] text-[#94a3b8] font-mono">1080p MP4</span>
+          </div>
+          <div class="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden">
+            <div class="bg-gradient-to-r from-[#6366f1] to-[#ec4899] h-full w-2/3 animate-pulse"></div>
+          </div>
+        </div>
+
+        <div id="video-actions" class="hidden flex items-center justify-between pt-1">
+          <span class="text-xs text-[#16a34a] font-semibold flex items-center gap-1.5">
+            <i data-lucide="check-circle" class="w-4 h-4"></i> Video ready!
+          </span>
+          <a id="video-download-btn" href="#" download class="px-4 py-2 bg-[#e11d48] hover:bg-[#be123c] text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i> Download MP4
+          </a>
+        </div>
+      </div>
+
+      <div class="p-4 border-t border-[#f1f5f9] bg-[#f8fafc] flex items-center justify-end gap-2">
+        <button onclick="closeVideoModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-[#64748b] hover:bg-[#e2e8f0]/50">Close</button>
+        <button onclick="generateVideo()" id="btn-generate-video" class="px-5 py-2 rounded-xl text-xs font-semibold bg-[#4f46e5] hover:bg-[#4338ca] text-white shadow-xs flex items-center gap-1.5">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Generate Explainer Video
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Mind Maps / Knowledge Graph Modal -->
+  <div id="mindmaps-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white border border-[#e2e8f0] rounded-2xl w-full max-w-2xl shadow-xl overflow-hidden flex flex-col">
+      <div class="p-5 border-b border-[#f1f5f9] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="network" class="w-5 h-5 text-[#9333ea]"></i>
+          <h3 class="font-bold text-[15px] text-[#0f172a]">Concept Mind Maps & Knowledge Graph</h3>
+        </div>
+        <button onclick="closeMindMapsModal()" class="text-[#94a3b8] hover:text-[#0f172a] p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6 overflow-y-auto max-h-[70vh] custom-scrollbar space-y-3">
+        <div class="text-xs text-[#64748b]">Prerequisite concept pathways tracked in your agent's memory:</div>
+        <div id="mindmaps-list" class="space-y-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Flashcards Modal -->
+  <div id="flashcards-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white border border-[#e2e8f0] rounded-2xl w-full max-w-lg shadow-xl overflow-hidden flex flex-col">
+      <div class="p-5 border-b border-[#f1f5f9] flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="file-text" class="w-5 h-5 text-[#0284c7]"></i>
+          <h3 class="font-bold text-[15px] text-[#0f172a]">Spaced Repetition Flashcards (SM-2)</h3>
+        </div>
+        <button onclick="closeFlashcardsModal()" class="text-[#94a3b8] hover:text-[#0f172a] p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6 space-y-4">
+        <div class="p-5 rounded-2xl bg-[#f8fafc] border border-[#e2e8f0] min-h-[160px] flex flex-col justify-between">
+          <div class="text-[11px] font-semibold text-[#0284c7] uppercase tracking-wider">Concept Card</div>
+          <div id="flashcard-question" class="text-[15px] font-semibold text-[#0f172a] my-3">What is the difference between BFS and DFS in graph traversal?</div>
+          <div id="flashcard-answer" class="text-xs text-[#475569] hidden border-t border-[#e2e8f0] pt-2">
+            BFS uses a Queue to explore neighbor nodes level-by-level (finds shortest unweighted path). DFS uses a Stack/Recursion to explore as deep as possible before backtracking.
+          </div>
+        </div>
+        <button onclick="toggleFlashcardAnswer()" id="btn-toggle-answer" class="w-full py-2 bg-[#f1f5f9] hover:bg-[#e2e8f0] rounded-xl text-xs font-semibold text-[#334155] transition">
+          Show Answer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden Audio Player for TTS -->
+  <audio id="audio-player" class="hidden"></audio>
+
+  <!-- ========================================== -->
+  <!-- APPLICATION LOGIC JAVASCRIPT               -->
+  <!-- ========================================== -->
+  <script>
+    // --- Storage helpers with automatic novastudy -> kitai migration ---
+    const getStorage = (k) => localStorage.getItem('kitai_' + k) ?? localStorage.getItem('novastudy_' + k);
+    const setStorage = (k, v) => localStorage.setItem('kitai_' + k, v);
+    const removeStorage = (k) => { localStorage.removeItem('kitai_' + k); localStorage.removeItem('novastudy_' + k); };
+
+    let activeMode = 'study'; // 'study' or 'create'
+    let currentConversationId = null;
+    let selectedModel = 'qwen/qwen3.8-27b';
+    let leftSidebarExpanded = true;
+    let rightSidebarExpanded = true;
+    let currentAttachedFile = null;
+    let currentTheme = getStorage('theme') || 'light';
+
+    // --- Conversation Store (Persistent in localStorage) ---
+    const DEFAULT_CHATS = [
+      { id: 'chat_1', title: 'Adding 3 numbers in C++', group: 'today', messages: [
+        { role: 'user', content: 'How do I add 3 numbers in C++ with user input?' },
+        { role: 'assistant', reply: 'Here is a clean C++ program to add 3 numbers:\n\n```cpp\n#include <iostream>\n\nint main() {\n    int a, b, c;\n    std::cout << "Enter three numbers: ";\n    if (std::cin >> a >> b >> c) {\n        int sum = a + b + c;\n        std::cout << "Sum = " << sum << std::endl;\n    }\n    return 0;\n}\n```\n\n### Complexity\n- **Time Complexity:** O(1)\n- **Space Complexity:** O(1)', code_passed: true }
+      ]},
+      { id: 'chat_2', title: 'Binary Search Explanation', group: 'today', messages: [
+        { role: 'user', content: 'Explain binary search and its time complexity.' },
+        { role: 'assistant', reply: 'Binary Search operates on a **sorted array** by repeatedly dividing the search space in half.\n\n- At each step, compare target to the middle element `arr[mid]`.\n- If equal, target found!\n- If `target < arr[mid]`, discard right half.\n- Else discard left half.\n\nTime complexity is **O(log N)**.', code_passed: null }
+      ]},
+      { id: 'chat_3', title: 'Photosynthesis Animation', group: 'today', messages: [] },
+      { id: 'chat_4', title: 'Calculus Derivative', group: 'today', messages: [] },
+      { id: 'chat_5', title: 'Neural Networks Basics', group: 'today', messages: [] },
+      { id: 'chat_6', title: 'HTML vs React', group: 'yesterday', messages: [] },
+      { id: 'chat_7', title: 'Space-Time Concept', group: 'yesterday', messages: [] },
+      { id: 'chat_8', title: 'Python Recursion', group: 'yesterday', messages: [] }
+    ];
+
+    let chatList = [];
+
+    function initChatStore() {
+      try {
+        const stored = getStorage('chats');
+        if (stored) {
+          chatList = JSON.parse(stored);
+        } else {
+          chatList = DEFAULT_CHATS;
+          saveChatStore();
+        }
+      } catch (e) {
+        chatList = DEFAULT_CHATS;
+      }
+      renderChatHistory();
+
+      // Restore active chat session on page refresh
+      const activeId = getStorage('active_chat_id');
+      if (activeId && chatList.some(c => c.id === activeId)) {
+        loadChatById(activeId);
+      }
+    }
+
+    function saveChatStore() {
+      setStorage('chats', JSON.stringify(chatList));
+    }
+
+    function renderChatHistory(filter = '') {
+      const todayContainer = document.getElementById('history-today');
+      const yesterdayContainer = document.getElementById('history-yesterday');
+      const query = filter.toLowerCase().trim();
+
+      const filtered = chatList.filter(c => !query || c.title.toLowerCase().includes(query));
+      
+      const renderItem = (item) => {
+        const isSelected = item.id === currentConversationId;
+        const bgClass = isSelected ? 'bg-[#f1f5f9] text-[#0f172a] font-medium' : 'text-[#475569] hover:bg-[#f8fafc] hover:text-[#0f172a]';
+        const iconColor = isSelected ? 'text-[#4f46e5]' : 'text-[#94a3b8]';
+
+        return `
+          <div class="chat-item-row group relative flex items-center justify-between w-full rounded-xl transition ${bgClass} px-2.5 py-1.5 cursor-pointer" onclick="loadChatById('${item.id}')">
+            <div class="flex items-center gap-2.5 overflow-hidden flex-1 mr-1">
+              <i data-lucide="message-square" class="w-3.5 h-3.5 ${iconColor} shrink-0"></i>
+              <span class="truncate text-[13px]">${escapeHtml(item.title)}</span>
+            </div>
+            <div class="opacity-0 group-hover:opacity-100 flex items-center gap-1 shrink-0 transition" onclick="event.stopPropagation()">
+              <button onclick="renameChat('${item.id}')" title="Rename" class="p-1 text-[#94a3b8] hover:text-[#4f46e5] rounded transition">
+                <i data-lucide="edit-2" class="w-3 h-3"></i>
+              </button>
+              <button onclick="deleteChat('${item.id}')" title="Delete" class="p-1 text-[#94a3b8] hover:text-rose-600 rounded transition">
+                <i data-lucide="trash-2" class="w-3 h-3"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      };
+
+      const todayItems = filtered.filter(c => c.group === 'today');
+      const yesterdayItems = filtered.filter(c => c.group === 'yesterday');
+
+      todayContainer.innerHTML = todayItems.length ? todayItems.map(renderItem).join('') : '<div class="px-2 py-1 text-[11px] text-[#94a3b8]">No chats</div>';
+      yesterdayContainer.innerHTML = yesterdayItems.length ? yesterdayItems.map(renderItem).join('') : '<div class="px-2 py-1 text-[11px] text-[#94a3b8]">No chats</div>';
+      lucide.createIcons();
+    }
+
+    function filterChatHistory(query) {
+      renderChatHistory(query);
+    }
+
+    function renameChat(id) {
+      const chat = chatList.find(c => c.id === id);
+      if (!chat) return;
+      const newTitle = prompt("Rename conversation:", chat.title);
+      if (newTitle && newTitle.trim()) {
+        chat.title = newTitle.trim();
+        saveChatStore();
+        renderChatHistory();
+      }
+    }
+
+    function deleteChat(id) {
+      if (!confirm("Delete this conversation?")) return;
+      chatList = chatList.filter(c => c.id !== id);
+      saveChatStore();
+      if (currentConversationId === id) {
+        startNewChat();
+      } else {
+        renderChatHistory();
+      }
+    }
+
+    function loadChatById(id) {
+      const chat = chatList.find(c => c.id === id);
+      if (!chat) return;
+      currentConversationId = id;
+      setStorage('active_chat_id', id);
+      renderChatHistory();
+
+      document.getElementById('welcome-dashboard').classList.add('hidden');
+      const messagesView = document.getElementById('messages-view');
+      messagesView.innerHTML = '';
+      messagesView.classList.remove('hidden');
+
+      if (chat.messages && chat.messages.length > 0) {
+        chat.messages.forEach(m => {
+          if (m.role === 'user') {
+            appendUserMessage(m.content, m.fileName ? { name: m.fileName } : null, m.fileDataUrl || null);
+          } else {
+            appendAssistantMessage(m, chat.title);
+          }
+        });
+      } else {
+        appendUserMessage(chat.title);
+        appendAssistantMessage({
+          reply: `Viewing previous study session for **${chat.title}**. Ask anything to continue learning!`,
+          task_type: "Study"
+        }, chat.title);
+      }
+    }
+
+    // --- Sidebar State Management (Independent & LocalStorage persisted) ---
+    function initSidebarStates() {
+      const leftPref = getStorage('left_sidebar');
+      const rightPref = getStorage('right_sidebar');
+
+      if (leftPref === 'collapsed') {
+        setLeftSidebar(false);
+      }
+      if (rightPref === 'collapsed') {
+        setRightSidebar(false);
+      }
+    }
+
+    function toggleLeftSidebar() {
+      setLeftSidebar(!leftSidebarExpanded);
+    }
+
+    function setLeftSidebar(expanded) {
+      leftSidebarExpanded = expanded;
+      const sidebar = document.getElementById('left-sidebar');
+      const mobileToggle = document.getElementById('left-mobile-toggle');
+      
+      if (expanded) {
+        sidebar.style.width = '16rem'; // 256px
+        sidebar.querySelectorAll('.sidebar-text').forEach(el => el.classList.remove('hidden'));
+        mobileToggle.classList.add('hidden');
+        setStorage('left_sidebar', 'expanded');
+      } else {
+        sidebar.style.width = '0px'; // completely collapse cleanly
+        sidebar.querySelectorAll('.sidebar-text').forEach(el => el.classList.add('hidden'));
+        mobileToggle.classList.remove('hidden');
+        setStorage('left_sidebar', 'collapsed');
+      }
+    }
+
+    function toggleRightSidebar() {
+      setRightSidebar(!rightSidebarExpanded);
+    }
+
+    function setRightSidebar(expanded) {
+      rightSidebarExpanded = expanded;
+      const sidebar = document.getElementById('right-sidebar');
+      if (expanded) {
+        sidebar.style.width = '18rem'; // 288px
+        sidebar.style.padding = '1rem';
+        sidebar.classList.remove('hidden');
+        setStorage('right_sidebar', 'expanded');
+      } else {
+        sidebar.style.width = '0px';
+        sidebar.style.padding = '0px';
+        sidebar.classList.add('hidden');
+        setStorage('right_sidebar', 'collapsed');
+      }
+    }
+
+    // --- Study vs Create Mode Segmented Control ---
+    function setMainMode(mode) {
+      activeMode = mode;
+      const segStudy = document.getElementById('seg-study');
+      const segCreate = document.getElementById('seg-create');
+
+      if (mode === 'study') {
+        segStudy.className = "px-5 py-1.5 rounded-full font-semibold transition bg-[#ffffff] text-[#4f46e5] shadow-xs";
+        segCreate.className = "px-5 py-1.5 rounded-full transition text-[#64748b] hover:text-[#0f172a]";
+        document.getElementById('composer-textarea').placeholder = "Ask anything... (text, image, audio or video)";
+      } else {
+        segCreate.className = "px-5 py-1.5 rounded-full font-semibold transition bg-[#ffffff] text-[#4f46e5] shadow-xs";
+        segStudy.className = "px-5 py-1.5 rounded-full transition text-[#64748b] hover:text-[#0f172a]";
+        document.getElementById('composer-textarea').placeholder = "Create a study guide, animation script, or quiz...";
+      }
+    }
+
+    // --- Action Cards Clicking ---
+    function selectActionCard(type) {
+      const textarea = document.getElementById('composer-textarea');
+      if (type === 'code') {
+        textarea.value = "Solve this coding problem in C++ / Python: ";
+        textarea.focus();
+      } else if (type === 'explain') {
+        textarea.value = "Explain the concept of ";
+        textarea.focus();
+      } else if (type === 'video') {
+        openVideoModal();
+      } else if (type === 'image') {
+        document.getElementById('image-file-input').click();
+      }
+    }
+
+    function fillPrompt(text) {
+      const textarea = document.getElementById('composer-textarea');
+      textarea.value = text;
+      textarea.focus();
+    }
+
+    const suggestionSets = [
+      ["Explain recursion like I'm 15", "Create a video on photosynthesis", "Solve this LeetCode problem", "Explain this diagram"],
+      ["How does gradient descent work?", "Compare C++ pointers vs Java references", "Generate a quiz on thermodynamics", "Teach me Big-O notation with analogies"],
+      ["Derive quadratic formula step-by-step", "Make an animated video for binary search", "Debug my segmentation fault", "Summarize key machine learning metrics"]
+    ];
+    let suggestionIndex = 0;
+
+    function rotatePromptSuggestions() {
+      suggestionIndex = (suggestionIndex + 1) % suggestionSets.length;
+      const chips = suggestionSets[suggestionIndex];
+      const container = document.getElementById('prompt-chips');
+      container.innerHTML = chips.map(c => `
+        <button onclick="fillPrompt('${c.replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-full bg-[#f8fafc] border border-[#f1f5f9] hover:border-[#cbd5e1] hover:bg-[#ffffff] text-[#334155] transition">
+          ${c}
+        </button>
+      `).join('');
+    }
+
+    // --- Chat Submissions & UI Switching ---
+    function handleComposerKey(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        submitPrompt();
+      }
+    }
+
+    let currentAttachedDataUrl = null;
+
+    function updateComposerShape() {
+      const card = document.getElementById('composer-input-card');
+      const textarea = document.getElementById('composer-textarea');
+      const preview = document.getElementById('attachment-preview-inside');
+      if (!card) return;
+      const hasAttachment = currentAttachedFile !== null && preview && !preview.classList.contains('hidden');
+      const isMultiLine = textarea && (textarea.value.includes('\n') || textarea.scrollHeight > 44);
+      if (hasAttachment || isMultiLine) {
+        card.classList.add('is-expanded');
+      } else {
+        card.classList.remove('is-expanded');
+      }
+    }
+
+    function handleComposerInput(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 180) + 'px';
+      updateComposerShape();
+    }
+
+    function startNewChat() {
+      currentConversationId = null;
+      removeStorage('active_chat_id');
+      renderChatHistory();
+      document.getElementById('messages-view').classList.add('hidden');
+      document.getElementById('messages-view').innerHTML = '';
+      document.getElementById('welcome-dashboard').classList.remove('hidden');
+      const textarea = document.getElementById('composer-textarea');
+      textarea.value = '';
+      textarea.style.height = 'auto';
+      removeAttachment();
+      updateComposerShape();
+    }
+
+    async function submitPrompt() {
+      const textarea = document.getElementById('composer-textarea');
+      const text = textarea.value.trim();
+      if (!text && !currentAttachedFile) return;
+
+      const fileToSend = currentAttachedFile;
+      const fileDataUrl = currentAttachedDataUrl;
+
+      textarea.value = '';
+      textarea.style.height = 'auto';
+      removeAttachment();
+      updateComposerShape();
+      
+      // Switch view from Welcome to Messages
+      document.getElementById('welcome-dashboard').classList.add('hidden');
+      document.getElementById('messages-view').classList.remove('hidden');
+
+      appendUserMessage(text, fileToSend, fileDataUrl);
+      setSending(true);
+
+      const effectiveQuery = text || (fileToSend && fileToSend.type.startsWith('image/') ? 'Please analyze this image or diagram and explain what is shown.' : `Analyze ${fileToSend?.name || 'this file'}`);
+
+      // Create new chat entry in store if needed
+      if (!currentConversationId) {
+        currentConversationId = 'chat_' + Date.now();
+        setStorage('active_chat_id', currentConversationId);
+        const shortTitle = (text || fileToSend?.name || 'New Conversation').slice(0, 32);
+        chatList.unshift({
+          id: currentConversationId,
+          title: shortTitle,
+          group: 'today',
+          messages: [{ role: 'user', content: text, fileName: fileToSend?.name, fileDataUrl: fileToSend?.type.startsWith('image/') ? fileDataUrl : null }]
+        });
+        saveChatStore();
+        renderChatHistory();
+      } else {
+        setStorage('active_chat_id', currentConversationId);
+        const existing = chatList.find(c => c.id === currentConversationId);
+        if (existing) {
+          existing.messages = existing.messages || [];
+          existing.messages.push({ role: 'user', content: text, fileName: fileToSend?.name, fileDataUrl: fileToSend?.type.startsWith('image/') ? fileDataUrl : null });
+          saveChatStore();
+        }
+      }
+
+      try {
+        let imageBase64Payload = null;
+        let finalMessage = effectiveQuery;
+
+        if (fileToSend) {
+          if (fileToSend.type.startsWith('image/')) {
+            if (fileDataUrl) {
+              imageBase64Payload = fileDataUrl;
+            } else {
+              imageBase64Payload = await new Promise((resolve) => {
+                const r = new FileReader();
+                r.onload = () => resolve(r.result);
+                r.readAsDataURL(fileToSend);
+              });
+            }
+          } else if (fileToSend.size < 500000 && (fileToSend.name.endsWith('.txt') || fileToSend.name.endsWith('.py') || fileToSend.name.endsWith('.cpp') || fileToSend.name.endsWith('.c') || fileToSend.name.endsWith('.java') || fileToSend.name.endsWith('.csv') || fileToSend.name.endsWith('.md') || fileToSend.name.endsWith('.json'))) {
+            const content = await new Promise((resolve) => {
+              const r = new FileReader();
+              r.onload = () => resolve(r.result);
+              r.readAsText(fileToSend);
+            });
+            finalMessage += `\n\n[File: ${fileToSend.name}]\n\`\`\`\n${content}\n\`\`\``;
+          } else {
+            finalMessage += `\n\n[Attached File: ${fileToSend.name} (${Math.round(fileToSend.size / 1024)} KB)]`;
+          }
+        }
+
+        const payload = {
+          message: finalMessage,
+          conversation_id: currentConversationId,
+          mode: activeMode === 'study' ? 'answer' : 'explain',
+          image_base64: imageBase64Payload
+        };
+
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        
+        // Save assistant reply
+        const curChat = chatList.find(c => c.id === currentConversationId);
+        if (curChat && (data.reply || data.solution)) {
+          curChat.messages.push({ role: 'assistant', reply: data.reply || data.solution, code_passed: data.code_passed });
+          saveChatStore();
+        }
+
+        appendAssistantMessage(data, finalMessage);
+      } catch (err) {
+        appendErrorMessage("Failed to connect to agent: " + err.message);
+      } finally {
+        setSending(false);
+      }
+    }
+
+    function appendUserMessage(text, attachedFile, fileDataUrl) {
+      const view = document.getElementById('messages-view');
+      const div = document.createElement('div');
+      div.className = "flex justify-end";
+
+      let attachmentHtml = '';
+      if (attachedFile || fileDataUrl) {
+        if (fileDataUrl || (attachedFile && attachedFile.type && attachedFile.type.startsWith('image/'))) {
+          const src = fileDataUrl || (attachedFile ? URL.createObjectURL(attachedFile) : '');
+          attachmentHtml = `
+            <div class="mb-2">
+              <img src="${src}" class="max-w-xs max-h-52 rounded-xl border border-black/10 dark:border-white/10 object-cover" alt="Attached image">
+            </div>`;
+        } else if (attachedFile) {
+          attachmentHtml = `
+            <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/5 dark:bg-white/10 text-xs font-medium mb-2 border border-black/10 dark:border-white/10">
+              <i data-lucide="file-text" class="w-3.5 h-3.5 text-indigo-500"></i>
+              <span>${escapeHtml(attachedFile.name)}</span>
+            </div>`;
+        }
+      }
+
+      const textHtml = text ? `<div class="leading-relaxed">${escapeHtml(text)}</div>` : '';
+
+      div.innerHTML = `
+        <div class="user-bubble max-w-xl bg-[#f1f5f9] text-[#0f172a] rounded-2xl px-4 py-2.5 text-[14px] font-normal shadow-2xs">
+          ${attachmentHtml}
+          ${textHtml}
+        </div>`;
+      view.appendChild(div);
+      lucide.createIcons();
+      scrollToBottom();
+    }
+
+    function appendAssistantMessage(data, promptText) {
+      const replyText = (data.reply || data.content || data.solution || '').trim();
+      if (!replyText) {
+        console.warn("Ignoring empty assistant reply to avoid blank bubble");
+        return;
+      }
+
+      const view = document.getElementById('messages-view');
+      const div = document.createElement('div');
+      div.className = "flex gap-3.5";
+
+      const verifiedBadge = data.code_passed === true ? `
+        <span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-[#f0fdf4] text-[#16a34a] border border-[#bbf7d0]">
+          <i data-lucide="check" class="w-3 h-3"></i> Verified in Sandbox
+        </span>` : '';
+
+      const contentHtml = marked.parse(replyText);
+
+      div.innerHTML = `
+        <div class="kitai-logo-circle w-7 h-7 shrink-0 mt-0.5 shadow-xs">
+          <div class="inner-disc">
+            <img src="/kitai-logo-round.png" alt="KitAi">
+          </div>
+        </div>
+        <div class="flex-1 space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-[#0f172a] dark:text-[#ececec]">KitAi</span>
+            ${verifiedBadge}
+            <div class="ml-auto flex items-center gap-2">
+              <button onclick="copyFullMessage(this, '${escapeForAudio(replyText)}')" class="text-xs text-[#64748b] hover:text-[#0f172a] font-medium flex items-center gap-1 transition">
+                <i data-lucide="copy" class="w-3 h-3"></i> Copy
+              </button>
+              <button onclick="openVideoModal('${escapeForAudio(promptText || 'Concept Breakdown')}')" class="text-xs text-[#e11d48] hover:text-[#be123c] font-medium flex items-center gap-1 transition">
+                <i data-lucide="play" class="w-3 h-3 fill-current"></i> Video
+              </button>
+              <button onclick="playTTS(this, '${escapeForAudio(replyText)}')" class="text-xs text-[#4f46e5] hover:text-[#4338ca] font-medium flex items-center gap-1 transition">
+                <i data-lucide="volume-2" class="w-3 h-3"></i> Listen
+              </button>
+            </div>
+          </div>
+          <div class="prose prose-slate prose-sm max-w-none text-[#1e293b] leading-relaxed">
+            ${contentHtml}
+          </div>
+        </div>`;
+
+      view.appendChild(div);
+      lucide.createIcons();
+      attachCodeCopyButtons(div);
+      scrollToBottom();
+    }
+
+    function copyFullMessage(btn, text) {
+      navigator.clipboard.writeText(text);
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = `<i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Copied!`;
+      lucide.createIcons();
+      setTimeout(() => { btn.innerHTML = origHtml; lucide.createIcons(); }, 1800);
+    }
+
+    /* Formats code blocks into the exact NovaStudy reference image styling */
+    function attachCodeCopyButtons(container) {
+      container.querySelectorAll('pre').forEach(pre => {
+        if (pre.closest('.code-window')) {
+          return;
+        }
+
+        const code = pre.querySelector('code');
+        if (!code) return;
+
+        // Detect language name and extension from code class
+        let langName = 'Code';
+        let langExt = 'txt';
+        const classes = code.className ? code.className.split(/\s+/) : [];
+        for (const cls of classes) {
+          if (cls.startsWith('language-')) {
+            const rawLang = cls.replace('language-', '').toLowerCase();
+            if (rawLang === 'cpp' || rawLang === 'c++') {
+              langName = 'C++';
+              langExt = 'cpp';
+            } else if (rawLang === 'c') {
+              langName = 'C';
+              langExt = 'c';
+            } else if (rawLang === 'python' || rawLang === 'py') {
+              langName = 'Python';
+              langExt = 'py';
+            } else if (rawLang === 'javascript' || rawLang === 'js') {
+              langName = 'JavaScript';
+              langExt = 'js';
+            } else if (rawLang === 'typescript' || rawLang === 'ts') {
+              langName = 'TypeScript';
+              langExt = 'ts';
+            } else if (rawLang === 'html') {
+              langName = 'HTML';
+              langExt = 'html';
+            } else if (rawLang === 'css') {
+              langName = 'CSS';
+              langExt = 'css';
+            } else if (rawLang === 'java') {
+              langName = 'Java';
+              langExt = 'java';
+            } else if (rawLang === 'sql') {
+              langName = 'SQL';
+              langExt = 'sql';
+            } else if (rawLang === 'bash' || rawLang === 'sh' || rawLang === 'shell') {
+              langName = 'Bash';
+              langExt = 'sh';
+            } else {
+              langName = rawLang.toUpperCase();
+              langExt = rawLang;
+            }
+            break;
+          }
+        }
+
+        // Apply Highlight.js tokenization
+        hljs.highlightElement(code);
+
+        // Build wrapper card matching the reference image layout
+        const card = document.createElement('div');
+        card.className = 'code-window';
+
+        const header = document.createElement('div');
+        header.className = 'code-window-header';
+        header.innerHTML = `
+          <span class="code-window-lang">${langName}</span>
+          <div class="code-window-actions">
+            <button class="code-window-btn" title="Download solution.${langExt}" onclick="downloadCodeSnippet(this, '${langExt}')">
+              <i data-lucide="arrow-down-circle" class="w-4 h-4"></i>
+            </button>
+            <button class="code-window-btn" title="Copy code" onclick="copyCodeSnippet(this)">
+              <i data-lucide="copy" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+
+        pre.parentNode.insertBefore(card, pre);
+        card.appendChild(header);
+        card.appendChild(pre);
+
+        pre.style.userSelect = 'text';
+        code.style.userSelect = 'text';
+      });
+
+      lucide.createIcons();
+    }
+
+    function copyCodeSnippet(btn) {
+      const card = btn.closest('.code-window');
+      const code = card ? card.querySelector('code') : null;
+      if (!code) return;
+      navigator.clipboard.writeText(code.innerText);
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>`;
+      lucide.createIcons();
+      setTimeout(() => {
+        btn.innerHTML = origHtml;
+        lucide.createIcons();
+      }, 1600);
+    }
+
+    function downloadCodeSnippet(btn, ext) {
+      const card = btn.closest('.code-window');
+      const code = card ? card.querySelector('code') : null;
+      if (!code) return;
+      const blob = new Blob([code.innerText], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `solution.${ext || 'txt'}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-emerald-400"></i>`;
+      lucide.createIcons();
+      setTimeout(() => {
+        btn.innerHTML = origHtml;
+        lucide.createIcons();
+      }, 1400);
+    }
+
+    function appendErrorMessage(err) {
+      const view = document.getElementById('messages-view');
+      const div = document.createElement('div');
+      div.className = "p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs";
+      div.innerText = err;
+      view.appendChild(div);
+      scrollToBottom();
+    }
+
+    function setSending(isSending) {
+      const btn = document.getElementById('composer-send-btn');
+      btn.disabled = isSending;
+      btn.innerHTML = isSending 
+        ? `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>` 
+        : `<i data-lucide="arrow-up" class="w-4 h-4"></i>`;
+      lucide.createIcons();
+    }
+
+    function scrollToBottom() {
+      const c = document.getElementById('center-scroll-container');
+      c.scrollTop = c.scrollHeight;
+    }
+
+    // --- Audio TTS Functionality ---
+    async function playTTS(btn, text) {
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-3 h-3 animate-spin text-[#4f46e5]"></i> Playing...`;
+      lucide.createIcons();
+
+      try {
+        const formData = new FormData();
+        formData.append('text', text);
+        const res = await fetch('/api/tts', { method: 'POST', body: formData });
+        const blob = await res.blob();
+        const player = document.getElementById('audio-player');
+        player.src = URL.createObjectURL(blob);
+        player.play();
+        player.onended = () => { btn.innerHTML = origHtml; lucide.createIcons(); };
+      } catch (e) {
+        btn.innerHTML = origHtml;
+        lucide.createIcons();
+      }
+    }
+
+    // --- Modals Management & API State Sync ---
+    async function checkApiConnection() {
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+        const pill = document.getElementById('api-status-pill');
+        const label = document.getElementById('api-status-label');
+        const keyDisplay = document.getElementById('settings-key-display');
+        const statusBox = document.getElementById('settings-status-box');
+
+        // Auto-heal key from localStorage if backend doesn't have it
+        const cachedKey = getStorage('groq_key');
+        if (!data.has_api_key && cachedKey) {
+          await fetch('/api/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ groq_api_key: cachedKey })
+          });
+          return checkApiConnection();
+        }
+
+        if (data.has_api_key) {
+          if (pill) {
+            pill.className = "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 hover:bg-emerald-100 transition shadow-2xs cursor-pointer";
+          }
+          if (label) {
+            const shortModel = (data.groq_model || 'qwen').split('/').pop().replace('qwen3.8-', 'Qwen ').replace('gpt-oss-', 'GPT ');
+            label.innerText = `Connected (${shortModel})`;
+          }
+          if (keyDisplay) {
+            keyDisplay.innerText = data.masked_api_key;
+          }
+          if (statusBox) {
+            statusBox.className = "p-3.5 rounded-xl border text-xs bg-emerald-50 border-emerald-200 text-emerald-800 flex items-center justify-between";
+            statusBox.innerHTML = `
+              <div class="flex items-center gap-2.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <div>
+                  <div class="font-bold">Groq API Key Active</div>
+                  <div class="text-[11px] text-emerald-600 font-mono">${data.masked_api_key}</div>
+                </div>
+              </div>
+              <span class="px-2.5 py-0.5 bg-white text-emerald-700 font-semibold rounded-lg border border-emerald-200 shadow-2xs">Verified</span>
+            `;
+          }
+          if (document.getElementById('profile-status-label')) {
+            document.getElementById('profile-status-label').innerText = 'Free Plan • API Connected';
+          }
+        } else {
+          if (pill) {
+            pill.className = "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/80 hover:bg-amber-100 transition shadow-2xs cursor-pointer";
+          }
+          if (label) label.innerText = "Connect API Key";
+          if (statusBox) {
+            statusBox.className = "p-3.5 rounded-xl border text-xs bg-amber-50 border-amber-200 text-amber-800 flex items-center justify-between";
+            statusBox.innerHTML = `
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                <span>No Groq API Key configured yet. Enter your key below to activate AI.</span>
+              </div>
+            `;
+          }
+        }
+      } catch (e) {
+        console.warn("API status check notice:", e);
+      }
+    }
+
+    async function openSettingsModal() {
+      document.getElementById('settings-modal').classList.remove('hidden');
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+        const keyDisplay = document.getElementById('settings-key-display');
+        const statusBox = document.getElementById('settings-status-box');
+
+        if (data.has_api_key) {
+          if (keyDisplay) keyDisplay.innerText = data.masked_api_key;
+          document.getElementById('input-api-key').placeholder = "Leave blank to keep saved key, or enter new key: gsk_...";
+        }
+
+        if (data.available_models && data.available_models.length > 0) {
+          const select = document.getElementById('select-model');
+          select.innerHTML = '';
+          data.available_models.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m.id;
+            opt.innerText = m.name || m.id;
+            if (m.id === data.groq_model) opt.selected = true;
+            select.appendChild(opt);
+          });
+        }
+        document.getElementById('select-voice').value = data.tts_voice || 'en-US-AriaNeural';
+        document.getElementById('select-lang').value = data.tts_language || 'en';
+      } catch (e) {}
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settings-modal').classList.add('hidden');
+    }
+
+    function toggleApiKeyVisibility() {
+      const input = document.getElementById('input-api-key');
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      document.getElementById('eye-icon').setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
+      lucide.createIcons();
+    }
+
+    async function saveSettings() {
+      const btn = document.getElementById('btn-save-settings');
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Testing key...`;
+      lucide.createIcons();
+
+      const apiKey = document.getElementById('input-api-key').value.trim();
+      const model = document.getElementById('select-model').value;
+      const voice = document.getElementById('select-voice').value;
+      const lang = document.getElementById('select-lang').value;
+
+      try {
+        const payload = { groq_model: model, tts_voice: voice, tts_language: lang };
+        if (apiKey) {
+          payload.groq_api_key = apiKey;
+          setStorage('groq_key', apiKey);
+        }
+
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        await checkApiConnection();
+
+        if (data.connection_test === 'connected') {
+          alert(`✅ Connected successfully! Verified active model: ${data.groq_model}`);
+          closeSettingsModal();
+        } else {
+          alert(`Settings saved. (${data.connection_test})`);
+        }
+      } catch (e) {
+        alert("Failed to save settings: " + e.message);
+      } finally {
+        btn.innerHTML = origHtml;
+        lucide.createIcons();
+      }
+    }
+
+    async function clearMemory() {
+      if (!confirm("Reset all stored experiences from vector memory?")) return;
+      try {
+        const res = await fetch('/api/settings/clear-memory', { method: 'POST' });
+        const d = await res.json();
+        alert(d.message);
+      } catch (e) { alert("Error: " + e.message); }
+    }
+
+    // --- Video Studio Modal ---
+    function openVideoModal(topic = "") {
+      document.getElementById('video-modal').classList.remove('hidden');
+      if (topic) {
+        document.getElementById('video-topic-input').value = topic;
+      }
+    }
+
+    function closeVideoModal() {
+      document.getElementById('video-modal').classList.add('hidden');
+    }
+
+    async function generateVideo() {
+      const topic = document.getElementById('video-topic-input').value.trim();
+      if (!topic) {
+        alert("Please enter a concept to animate.");
+        return;
+      }
+
+      const btn = document.getElementById('btn-generate-video');
+      const progress = document.getElementById('video-progress');
+      const container = document.getElementById('video-player-container');
+      const actions = document.getElementById('video-actions');
+
+      btn.disabled = true;
+      progress.classList.remove('hidden');
+      container.classList.add('hidden');
+      actions.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/video/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic: topic })
+        });
+        const data = await res.json();
+
+        if (data.video_url) {
+          const v = document.getElementById('video-player');
+          v.src = data.video_url;
+          container.classList.remove('hidden');
+          actions.classList.remove('hidden');
+          document.getElementById('video-download-btn').href = data.video_url;
+          v.play();
+        }
+      } catch (err) {
+        alert("Video generation failed: " + err.message);
+      } finally {
+        progress.classList.add('hidden');
+        btn.disabled = false;
+        lucide.createIcons();
+      }
+    }
+
+    // --- Mind Maps & Flashcards Modals ---
+    async function openMindMapsModal() {
+      document.getElementById('mindmaps-modal').classList.remove('hidden');
+      try {
+        const res = await fetch('/api/memory/graph?topic=CS');
+        const data = await res.json();
+        const list = document.getElementById('mindmaps-list');
+        list.innerHTML = (data.edges || []).slice(0, 12).map(e => `
+          <div class="p-2.5 bg-[#f8fafc] border border-[#f1f5f9] rounded-xl flex items-center justify-between text-xs">
+            <span class="font-semibold text-[#0f172a]">${e.source}</span>
+            <span class="text-[#4f46e5] text-[11px] font-medium flex items-center gap-1">prerequisite of →</span>
+            <span class="font-semibold text-[#4f46e5]">${e.target}</span>
+          </div>
+        `).join('');
+      } catch (e) {}
+    }
+
+    function closeMindMapsModal() {
+      document.getElementById('mindmaps-modal').classList.add('hidden');
+    }
+
+    function openFlashcardsModal() {
+      document.getElementById('flashcards-modal').classList.remove('hidden');
+    }
+
+    function closeFlashcardsModal() {
+      document.getElementById('flashcards-modal').classList.add('hidden');
+    }
+
+    function toggleFlashcardAnswer() {
+      const ans = document.getElementById('flashcard-answer');
+      const btn = document.getElementById('btn-toggle-answer');
+      const isHidden = ans.classList.contains('hidden');
+      ans.classList.toggle('hidden');
+      btn.innerText = isHidden ? "Hide Answer" : "Show Answer";
+    }
+
+    function openStudyToolsModal() {
+      openVideoModal();
+    }
+
+    function openLibraryModal() {
+      openMindMapsModal();
+    }
+
+    function openQuizModal() {
+      fillPrompt("Generate a 5-question multiple choice quiz on Binary Search with answer keys.");
+      submitPrompt();
+    }
+
+    function openNotesModal() {
+      fillPrompt("Generate structured study notes on Data Structures with summary tables.");
+      submitPrompt();
+    }
+
+    function openDiagramExplainerModal() {
+      document.getElementById('image-file-input').click();
+    }
+
+    // --- Upload Handlers & Plus Menu ---
+    function togglePlusMenu() {
+      const menu = document.getElementById('plus-dropdown-menu');
+      if (menu) {
+        menu.classList.toggle('hidden');
+        document.getElementById('tools-dropdown-menu')?.classList.add('hidden');
+        document.getElementById('model-dropdown-menu')?.classList.add('hidden');
+      }
+    }
+
+    function triggerImageUpload() {
+      document.getElementById('plus-dropdown-menu')?.classList.add('hidden');
+      document.getElementById('image-file-input')?.click();
+    }
+
+    function triggerVideoUpload() {
+      document.getElementById('plus-dropdown-menu')?.classList.add('hidden');
+      document.getElementById('video-file-input')?.click();
+    }
+
+    function triggerDocumentUpload() {
+      document.getElementById('plus-dropdown-menu')?.classList.add('hidden');
+      document.getElementById('doc-file-input')?.click();
+    }
+
+    function triggerOtherUpload() {
+      document.getElementById('plus-dropdown-menu')?.classList.add('hidden');
+      document.getElementById('generic-file-input')?.click();
+    }
+
+    function triggerGenericUpload() {
+      document.getElementById('generic-file-input')?.click();
+    }
+
+    function handleGenericFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      attachFilePreview(file, 'file');
+    }
+
+    function handleImageFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      attachFilePreview(file, 'image');
+    }
+
+    function handleVideoFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      attachFilePreview(file, 'video');
+    }
+
+    function attachFilePreview(file, type) {
+      if (!file) return;
+      currentAttachedFile = file;
+      currentAttachedDataUrl = null;
+      const previewContainer = document.getElementById('attachment-preview-inside');
+      const body = document.getElementById('attachment-preview-body');
+      if (!previewContainer || !body) return;
+
+      const isImg = (file.type && file.type.startsWith('image/')) || type === 'image';
+      const sizeKb = Math.round((file.size || 0) / 1024);
+      const sizeStr = sizeKb > 1024 ? (sizeKb / 1024).toFixed(1) + ' MB' : sizeKb + ' KB';
+
+      if (isImg) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          currentAttachedDataUrl = e.target.result;
+          body.innerHTML = `
+            <img src="${currentAttachedDataUrl}" class="w-8 h-8 object-cover rounded-lg border border-black/10 dark:border-white/10 shrink-0" alt="Thumbnail">
+            <div class="flex flex-col text-left truncate leading-tight">
+              <span class="text-xs font-semibold truncate max-w-[200px] text-[#0f172a] dark:text-[#ececec]">${escapeHtml(file.name || 'image.png')}</span>
+              <span class="text-[10px] text-[#64748b] dark:text-[#9ca3af]">${sizeStr} • Image</span>
+            </div>
+          `;
+          previewContainer.classList.remove('hidden');
+          updateComposerShape();
+        };
+        reader.readAsDataURL(file);
+      } else {
+        let iconName = 'file-text';
+        let iconColor = 'text-emerald-500';
+        if ((file.type && file.type.startsWith('video/')) || type === 'video') {
+          iconName = 'video';
+          iconColor = 'text-purple-500';
+        }
+        body.innerHTML = `
+          <div class="w-8 h-8 rounded-lg bg-black/5 dark:bg-white/10 flex items-center justify-center ${iconColor} shrink-0">
+            <i data-lucide="${iconName}" class="w-4 h-4"></i>
+          </div>
+          <div class="flex flex-col text-left truncate leading-tight">
+            <span class="text-xs font-semibold truncate max-w-[200px] text-[#0f172a] dark:text-[#ececec]">${escapeHtml(file.name)}</span>
+            <span class="text-[10px] text-[#64748b] dark:text-[#9ca3af]">${sizeStr}</span>
+          </div>
+        `;
+        previewContainer.classList.remove('hidden');
+        lucide.createIcons();
+        updateComposerShape();
+      }
+
+      document.getElementById('composer-textarea').placeholder = `Ask a question about ${file.name || 'this image'}...`;
+      document.getElementById('composer-textarea').focus();
+    }
+
+    function removeAttachment() {
+      currentAttachedFile = null;
+      currentAttachedDataUrl = null;
+      const previewContainer = document.getElementById('attachment-preview-inside');
+      const body = document.getElementById('attachment-preview-body');
+      if (previewContainer) previewContainer.classList.add('hidden');
+      if (body) body.innerHTML = '';
+      document.getElementById('composer-textarea').placeholder = "Ask anything...";
+      updateComposerShape();
+      ['image-file-input', 'video-file-input', 'doc-file-input', 'generic-file-input'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+    }
+
+    function initFileDragAndPaste() {
+      const card = document.getElementById('composer-input-card');
+      if (card) {
+        ['dragenter', 'dragover'].forEach(name => {
+          card.addEventListener(name, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            card.classList.add('drag-over');
+          });
+        });
+        ['dragleave', 'drop'].forEach(name => {
+          card.addEventListener(name, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            card.classList.remove('drag-over');
+          });
+        });
+        card.addEventListener('drop', (e) => {
+          if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            const file = e.dataTransfer.files[0];
+            const isImg = file.type && file.type.startsWith('image/');
+            attachFilePreview(file, isImg ? 'image' : 'file');
+          }
+        });
+      }
+
+      // Clipboard paste support (e.g. screenshots with Ctrl+V)
+      document.addEventListener('paste', (e) => {
+        const items = (e.clipboardData || window.clipboardData)?.items;
+        if (!items) return;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type && items[i].type.indexOf('image') !== -1) {
+            const file = items[i].getAsFile();
+            if (file) {
+              attachFilePreview(file, 'image');
+              e.preventDefault();
+              break;
+            }
+          }
+        }
+      });
+    }
+
+    function toggleAudioRecording() {
+      alert("Microphone recording active! Say your question, or use the file attachment button.");
+    }
+
+    function toggleToolsMenu() {
+      const menu = document.getElementById('tools-dropdown-menu');
+      if (menu) {
+        menu.classList.toggle('hidden');
+        document.getElementById('plus-dropdown-menu')?.classList.add('hidden');
+        document.getElementById('model-dropdown-menu')?.classList.add('hidden');
+      }
+    }
+
+    function selectTool(tool) {
+      document.getElementById('tools-dropdown-menu')?.classList.add('hidden');
+      if (tool === 'video') openVideoModal();
+      else if (tool === 'flashcards') openFlashcardsModal();
+      else if (tool === 'graph') openMindMapsModal();
+      else if (tool === 'quiz') openQuizModal();
+    }
+
+    function toggleModelDropdown() {
+      document.getElementById('model-dropdown-menu').classList.toggle('hidden');
+    }
+
+    function switchModel(modelId, label) {
+      selectedModel = modelId;
+      document.getElementById('active-model-label').innerText = label;
+      document.getElementById('model-dropdown-menu').classList.add('hidden');
+      fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ groq_model: modelId })
+      });
+    }
+
+    function openSearchModal() {
+      const q = prompt("Search study history and concepts:");
+      if (q) {
+        fetch('/api/memory/search?q=' + encodeURIComponent(q))
+          .then(r => r.json())
+          .then(d => {
+            alert(`Found ${d.results ? d.results.length : 0} matching study experiences in memory.`);
+          });
+      }
+    }
+
+    function toggleTheme() {
+      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+      setStorage('theme', currentTheme);
+      applyTheme();
+    }
+
+    function applyTheme() {
+      const toggleBtn = document.getElementById('theme-toggle-btn');
+      if (currentTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        if (toggleBtn) {
+          toggleBtn.innerHTML = `<i data-lucide="sun" class="w-4 h-4 text-amber-400"></i>`;
+          toggleBtn.title = "Switch to Light Theme";
+          lucide.createIcons();
+        }
+      } else {
+        document.documentElement.classList.remove('dark');
+        if (toggleBtn) {
+          toggleBtn.innerHTML = `<i data-lucide="moon" class="w-4 h-4 text-[#64748b]"></i>`;
+          toggleBtn.title = "Switch to Dark Theme";
+          lucide.createIcons();
+        }
+      }
+    }
+
+    function switchView(view) {
+      if (view === 'explore') {
+        openMindMapsModal();
+      }
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function escapeForAudio(str) {
+      return (str || '').replace(/[\n\r]+/g, " ").replace(/'/g, "\\'").replace(/"/g, '\\"').slice(0, 500);
+    }
+
+    // --- Onload Initialization ---
+    window.onload = () => {
+      applyTheme();
+      initChatStore();
+      initSidebarStates();
+      initFileDragAndPaste();
+      checkApiConnection();
+      lucide.createIcons();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const themeParam = urlParams.get('theme');
+      if (themeParam === 'dark' || themeParam === 'light') {
+        currentTheme = themeParam;
+        applyTheme();
+      }
+
+      const chatParam = urlParams.get('chat');
+      if (chatParam && chatList.some(c => c.id === chatParam)) {
+        loadChatById(chatParam);
+      }
+      
+      // Close dropdowns on outside click
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#plus-dropdown-menu') && !e.target.closest('#composer-plus-btn')) {
+          document.getElementById('plus-dropdown-menu')?.classList.add('hidden');
+        }
+        if (!e.target.closest('#tools-dropdown-menu') && !e.target.closest('#composer-tools-btn') && !e.target.closest('button[onclick="toggleToolsMenu()"]')) {
+          document.getElementById('tools-dropdown-menu')?.classList.add('hidden');
+        }
+        if (!e.target.closest('#model-dropdown-menu') && !e.target.closest('#model-pill-btn')) {
+          document.getElementById('model-dropdown-menu')?.classList.add('hidden');
+        }
+      });
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+# Core Web & API
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.10.0
+pydantic-settings>=2.7.0
+python-dotenv>=1.0.0
+python-multipart>=0.0.17
+websockets>=14.0
+httpx>=0.28.0
+
+# Database & ORM
+sqlalchemy>=2.0.36
+greenlet>=3.0.0
+aiosqlite>=0.20.0
+
+# LLM & Reasoning
+groq>=0.13.0
+langchain>=0.3.0
+langgraph>=0.2.0
+
+# Vector Memory & Knowledge Graph
+chromadb>=0.5.0
+networkx>=3.4.0
+
+# Voice & Media Utilities
+edge-tts>=7.0.0
+Pillow>=11.0.0
+
+# Logging & Monitoring
+structlog>=24.4.0
+rich>=13.9.0
