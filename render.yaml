@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: kitai
+    env: docker
+    plan: free
+    region: oregon
+    dockerfilePath: Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: GROQ_MODEL
+        value: qwen/qwen3.8-27b
+      - key: GROQ_VISION_MODEL
+        value: qwen/qwen3.8-27b
+      - key: TTS_ENGINE
+        value: edge
+      - key: TTS_VOICE
+        value: en-US-AriaNeural
+      - key: GROQ_API_KEY
+        sync: false
