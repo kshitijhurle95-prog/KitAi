@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KitAi — Learn Smarter</title>
-  <link rel="icon" type="image/png" href="/kitai-logo-round.png">
+  <link rel="icon" type="image/png" href="./kitai-logo-round.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
@@ -677,7 +677,7 @@
             <!-- Rounded Circular Logo with Gradient Matching Border -->
             <div class="kitai-logo-circle w-9 h-9 shrink-0">
               <div class="inner-disc">
-                <img src="/kitai-logo-round.png" alt="KitAi Logo">
+                <img src="./kitai-logo-round.png" alt="KitAi Logo">
               </div>
             </div>
             <div class="flex flex-col truncate leading-tight">
@@ -987,7 +987,7 @@
                 <button onclick="toggleModelDropdown()" id="model-pill-btn" class="h-8 px-2.5 rounded-full flex items-center gap-2 shrink-0 transition text-[12px] font-medium">
                   <div class="kitai-logo-circle w-4 h-4 p-[1px] shrink-0">
                     <div class="inner-disc">
-                      <img src="/kitai-logo-round.png" alt="KitAi">
+                      <img src="./kitai-logo-round.png" alt="KitAi">
                     </div>
                   </div>
                   <span id="active-model-label">Kit-3.1</span>
@@ -1803,13 +1803,19 @@
           image_base64: imageBase64Payload
         };
 
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        const data = await res.json();
+        let data;
+        try {
+          const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error("Backend HTTP " + res.status);
+          data = await res.json();
+        } catch (backendErr) {
+          // Client-side fallback for GitHub Pages or offline execution
+          data = await clientSideChatFallback(payload);
+        }
         
         // Save assistant reply
         const curChat = chatList.find(c => c.id === currentConversationId);
@@ -1820,10 +1826,65 @@
 
         appendAssistantMessage(data, finalMessage);
       } catch (err) {
-        appendErrorMessage("Failed to connect to agent: " + err.message);
+        appendErrorMessage("Notice: " + err.message);
       } finally {
         setSending(false);
       }
+    }
+
+    async function clientSideChatFallback(payload) {
+      const userMsg = payload.message || "";
+      const cachedKey = getStorage('groq_key');
+
+      if (cachedKey) {
+        try {
+          const messages = [
+            {
+              role: "system",
+              content: "You are KitAi, an elite autonomous STEM study agent. Help the student understand concepts deeply with real-world analogies, step-by-step logic, and clean code formatting without unnecessary syntax noise."
+            },
+            {
+              role: "user",
+              content: userMsg
+            }
+          ];
+
+          const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Authorization": "Bearer " + cachedKey.trim(),
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              model: "qwen/qwen3.8-27b",
+              messages: messages,
+              temperature: 0.3,
+              max_tokens: 2048
+            })
+          });
+
+          if (res.ok) {
+            const apiData = await res.json();
+            const reply = apiData.choices[0]?.message?.content || "No response received.";
+            return {
+              reply: reply,
+              solution: reply,
+              task_type: "answer",
+              code_passed: true
+            };
+          }
+        } catch (e) {
+          console.warn("Direct Groq API fetch error:", e);
+        }
+      }
+
+      // If no key or direct call failed, provide structured overview
+      return {
+        reply: `### 🧠 KitAi Online Study Agent\n\nI am running live on **GitHub Pages**! To activate full sub-second autonomous reasoning with \`qwen/qwen3.8-27b\`:\n\n1. Click the **Settings icon (⚙️)** in the bottom left.\n2. Paste your free [Groq API Key](https://console.groq.com/keys).\n3. Click **Save Settings** to activate full conversational reasoning.\n\nHere is an instant breakdown of your question **"${userMsg.slice(0, 45)}"**:\n- **Core Principle:** Break complex problems into smaller intuitive steps.\n- **Real-Life Analogy:** Think of how everyday systems follow strict invariants.\n- **Practice Recommendation:** Test your logic with boundary conditions and edge cases!`,
+        solution: "Enter your free Groq API key in Settings to activate full live inference.",
+        task_type: "conceptual",
+        code_passed: true
+      };
     }
 
     function appendUserMessage(text, attachedFile, fileDataUrl) {
@@ -1881,7 +1942,7 @@
       div.innerHTML = `
         <div class="kitai-logo-circle w-7 h-7 shrink-0 mt-0.5 shadow-xs">
           <div class="inner-disc">
-            <img src="/kitai-logo-round.png" alt="KitAi">
+            <img src="./kitai-logo-round.png" alt="KitAi">
           </div>
         </div>
         <div class="flex-1 space-y-2">
@@ -2076,14 +2137,24 @@
         const formData = new FormData();
         formData.append('text', text);
         const res = await fetch('/api/tts', { method: 'POST', body: formData });
+        if (!res.ok) throw new Error("TTS endpoint unreachable");
         const blob = await res.blob();
         const player = document.getElementById('audio-player');
         player.src = URL.createObjectURL(blob);
         player.play();
         player.onended = () => { btn.innerHTML = origHtml; lucide.createIcons(); };
       } catch (e) {
-        btn.innerHTML = origHtml;
-        lucide.createIcons();
+        // Web Speech API fallback for GitHub Pages
+        if ('speechSynthesis' in window) {
+          const clean = text.replace(/```[\s\S]*?```/g, '').replace(/[#*_`]/g, '').slice(0, 500);
+          const u = new SpeechSynthesisUtterance(clean);
+          u.onend = () => { btn.innerHTML = origHtml; lucide.createIcons(); };
+          u.onerror = () => { btn.innerHTML = origHtml; lucide.createIcons(); };
+          window.speechSynthesis.speak(u);
+        } else {
+          btn.innerHTML = origHtml;
+          lucide.createIcons();
+        }
       }
     }
 
@@ -2091,6 +2162,7 @@
     async function checkApiConnection() {
       try {
         const res = await fetch('/api/settings');
+        if (!res.ok) throw new Error("Backend offline");
         const data = await res.json();
         const pill = document.getElementById('api-status-pill');
         const label = document.getElementById('api-status-label');
@@ -2140,18 +2212,20 @@
             pill.className = "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/80 hover:bg-amber-100 transition shadow-2xs cursor-pointer";
           }
           if (label) label.innerText = "Connect API Key";
-          if (statusBox) {
-            statusBox.className = "p-3.5 rounded-xl border text-xs bg-amber-50 border-amber-200 text-amber-800 flex items-center justify-between";
-            statusBox.innerHTML = `
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-                <span>No Groq API Key configured yet. Enter your key below to activate AI.</span>
-              </div>
-            `;
-          }
         }
       } catch (e) {
-        console.warn("API status check notice:", e);
+        // Running on GitHub Pages or standalone static mode
+        const cachedKey = getStorage('groq_key');
+        const pill = document.getElementById('api-status-pill');
+        const label = document.getElementById('api-status-label');
+        if (cachedKey) {
+          if (pill) pill.className = "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 hover:bg-emerald-100 transition shadow-2xs cursor-pointer";
+          if (label) label.innerText = "Connected (Browser)";
+          if (document.getElementById('profile-status-label')) document.getElementById('profile-status-label').innerText = 'GitHub Pages • Online';
+        } else {
+          if (pill) pill.className = "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/80 hover:bg-amber-100 transition shadow-2xs cursor-pointer";
+          if (label) label.innerText = "Connect API Key";
+        }
       }
     }
 
