@@ -9,6 +9,7 @@
 [![Python Version](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110%2B-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Groq Inference](https://img.shields.io/badge/Groq-Qwen%202.5%2027B%20Vision-f55036?style=for-the-badge&logo=fastly&logoColor=white)](https://groq.com/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?style=for-the-badge&logo=github)](https://kshitijhurle95-prog.github.io/KitAi/)
 [![Microsoft Edge-TTS](https://img.shields.io/badge/Voice-Edge--TTS%20Neural-0078d4?style=for-the-badge&logo=microsoft-edge&logoColor=white)](https://github.com/rany2/edge-tts)
 [![ChromaDB](https://img.shields.io/badge/Vector%20Memory-ChromaDB-fc521f?style=for-the-badge&logo=databricks&logoColor=white)](https://www.trychroma.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
